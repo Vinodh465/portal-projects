@@ -1,0 +1,19 @@
+<div class="page fade-in">
+  <div class="page-header">
+    <h1>Goods Receipts</h1>
+    <p>Goods received against your purchase orders</p>
+  </div>
+  <div class="loading-state" *ngIf="loading">
+    <mat-icon class="spin">sync</mat-icon> Loading Goods Receipts...
+  </div>
+  <div class="error-state" *ngIf="!loading && error">
+    <mat-icon>error_outline</mat-icon> {{ error }}
+  </div>
+  <app-reusable-table
+    *ngIf="!loading && !error"
+    [data]="data"
+    [columns]="columns"
+    title="Goods Receipt List"
+    exportFileName="goods_receipts"
+  ></app-reusable-table>
+</div>

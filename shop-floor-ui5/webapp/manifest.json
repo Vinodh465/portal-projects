@@ -1,0 +1,154 @@
+{
+  "_version": "1.12.0",
+  "sap.app": {
+    "id": "zshopfloor",
+    "type": "application",
+    "i18n": "i18n/i18n.properties",
+    "title": "Shop Floor Management",
+    "description": "SAPUI5 Shop Floor Management Application",
+    "applicationVersion": {
+      "version": "1.0.0"
+    },
+    "dataSources": {
+      "mainService": {
+        "uri": "/sap/opu/odata/SAP/ZPP_SHOP_FLOOR_093_SRV/",
+        "type": "OData",
+        "settings": {
+          "odataVersion": "2.0",
+          "localUri": "localService/metadata.xml"
+        }
+      }
+    }
+  },
+  "sap.ui": {
+    "technology": "UI5",
+    "icons": {
+      "icon": "sap-icon://factory",
+      "favIcon": ""
+    },
+    "deviceTypes": {
+      "desktop": true,
+      "tablet": true,
+      "phone": true
+    }
+  },
+  "sap.ui5": {
+    "rootView": {
+      "viewName": "zshopfloor.view.App",
+      "type": "XML",
+      "async": true
+    },
+    "dependencies": {
+      "minUI5Version": "1.60.0",
+      "libs": {
+        "sap.ui.layout": {},
+        "sap.ui.core": {},
+        "sap.m": {},
+        "sap.f": {},
+        "sap.tnt": {},
+        "sap.suite.ui.microchart": {},
+        "sap.suite.ui.commons": { "lazy": true }
+      }
+    },
+    "resources": {
+      "css": [
+        {
+          "uri": "css/style.css"
+        }
+      ]
+    },
+    "contentDensities": {
+      "compact": true,
+      "cozy": true
+    },
+    "models": {
+      "": {
+        "dataSource": "mainService",
+        "settings": {
+          "metadataUrlParams": {
+            "sap-language": "EN"
+          },
+          "defaultBindingMode": "TwoWay",
+          "defaultCountMode": "Inline",
+          "refreshAfterChange": false
+        }
+      },
+      "i18n": {
+        "type": "sap.ui.model.resource.ResourceModel",
+        "settings": {
+          "bundleName": "zshopfloor.i18n.i18n"
+        }
+      },
+      "userModel": {
+        "type": "sap.ui.model.json.JSONModel",
+        "settings": {
+          "userId": "",
+          "userName": "",
+          "isLoggedIn": false,
+          "sideMenuVisible": false,
+          "sideMenuExpanded": true
+        }
+      }
+    },
+    "routing": {
+      "config": {
+        "routerClass": "sap.m.routing.Router",
+        "viewType": "XML",
+        "async": true,
+        "viewPath": "zshopfloor.view",
+        "controlAggregation": "pages",
+        "controlId": "idAppControl",
+        "clearControlAggregation": true
+      },
+      "routes": [
+        {
+          "name": "login",
+          "pattern": "",
+          "target": ["login"]
+        },
+        {
+          "name": "dashboard",
+          "pattern": "dashboard",
+          "target": ["dashboard"]
+        },
+        {
+          "name": "plannedOrders",
+          "pattern": "plannedOrders",
+          "target": ["plannedOrders"]
+        },
+        {
+          "name": "productionOrders",
+          "pattern": "productionOrders",
+          "target": ["productionOrders"]
+        },
+        {
+          "name": "comparison",
+          "pattern": "comparison",
+          "target": ["comparison"]
+        }
+      ],
+      "targets": {
+        "login": {
+          "viewName": "Login",
+          "viewLevel": 1
+        },
+        "dashboard": {
+          "viewName": "Dashboard",
+          "viewLevel": 2
+        },
+        "plannedOrders": {
+          "viewName": "PlannedOrders",
+          "viewLevel": 3
+        },
+        "productionOrders": {
+          "viewName": "ProductionOrders",
+          "viewLevel": 3
+        },
+        "comparison": {
+          "viewName": "Comparison",
+          "viewLevel": 3
+        }
+      }
+    }
+  }
+}

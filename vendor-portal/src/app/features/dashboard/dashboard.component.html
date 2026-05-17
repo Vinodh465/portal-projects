@@ -1,0 +1,74 @@
+<div class="dashboard fade-in">
+  <!-- Page Header -->
+  <div class="page-header">
+    <div>
+      <h1>Dashboard</h1>
+      <p>Welcome back, {{ auth.vendorName() }} — here's your vendor overview</p>
+    </div>
+    <div class="header-date">
+      <mat-icon>calendar_today</mat-icon>
+      {{ currentDate | date:'EEEE, d MMM yyyy' }}
+    </div>
+  </div>
+
+  <!-- KPI Cards -->
+  <div class="kpi-grid">
+    <a class="kpi-card" *ngFor="let card of kpiCards" [routerLink]="card.route">
+      <div class="kpi-card__icon" [style.background]="card.color + '1a'" [style.color]="card.color">
+        <mat-icon>{{ card.icon }}</mat-icon>
+      </div>
+      <div class="kpi-card__body">
+        <p class="kpi-label">{{ card.label }}</p>
+        <h2 class="kpi-value">{{ getKpiValue(card.key) }}</h2>
+      </div>
+      <mat-icon class="arrow-icon">arrow_forward</mat-icon>
+    </a>
+  </div>
+
+  <!-- Charts Row -->
+  <div class="charts-row">
+    <div class="chart-card">
+      <div class="chart-card__header">
+        <h3>Document Summary</h3>
+        <span class="chart-subtitle">Total counts per module</span>
+      </div>
+      <div class="chart-body">
+        <canvas baseChart [data]="barChartData" [options]="barChartOptions" type="bar" height="220"></canvas>
+      </div>
+    </div>
+
+    <div class="chart-card chart-card--sm">
+      <div class="chart-card__header">
+        <h3>Payment Status</h3>
+        <span class="chart-subtitle">Paid vs. pending vs. overdue</span>
+      </div>
+      <div class="chart-body">
+        <canvas baseChart [data]="doughnutData" [options]="doughnutOptions" type="doughnut" height="220"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recent Activity -->
+  <div class="activity-card">
+    <div class="activity-card__header">
+      <h3>Recent Activity</h3>
+      <span class="view-all" routerLink="/purchase-order">View all</span>
+    </div>
+    <div class="activity-list">
+      <div class="activity-item" *ngFor="let item of recentActivity">
+        <div class="activity-icon">
+          <mat-icon>{{ item.icon }}</mat-icon>
+        </div>
+        <div class="activity-body">
+          <div class="activity-doc">{{ item.type }}: <strong>{{ item.doc }}</strong></div>
+          <div class="activity-date">{{ item.date }}</div>
+        </div>
+        <span [class]="getStatusClass(item.status)">{{ item.status }}</span>
+      </div>
+      <div class="no-activity" *ngIf="recentActivity.length === 0">
+        <mat-icon>inbox</mat-icon>
+        <p>No recent activity</p>
+      </div>
+    </div>
+  </div>
+</div>

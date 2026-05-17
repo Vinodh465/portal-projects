@@ -1,0 +1,42 @@
+<nav class="sidebar" [class.collapsed]="collapsed">
+  <!-- Logo -->
+  <div class="sidebar__logo">
+    <div class="logo-icon">VP</div>
+    <span class="logo-text" *ngIf="!collapsed">Vendor Portal</span>
+    <button class="toggle-btn" (click)="toggleSidebar.emit()">
+      <mat-icon>{{ collapsed ? 'chevron_right' : 'chevron_left' }}</mat-icon>
+    </button>
+  </div>
+
+  <!-- Vendor Info -->
+  <div class="sidebar__vendor" *ngIf="!collapsed">
+    <div class="vendor-avatar">{{ (auth.vendorName() || 'V')[0].toUpperCase() }}</div>
+    <div class="vendor-info">
+      <span class="vendor-name">{{ auth.vendorName() }}</span>
+      <span class="vendor-id">ID: {{ auth.vendorId() }}</span>
+    </div>
+  </div>
+
+  <!-- Nav Menu -->
+  <ul class="sidebar__nav">
+    <li *ngFor="let item of navItems">
+      <a
+        [routerLink]="item.route"
+        routerLinkActive="active"
+        [matTooltip]="collapsed ? item.label : ''"
+        matTooltipPosition="right"
+      >
+        <mat-icon>{{ item.icon }}</mat-icon>
+        <span *ngIf="!collapsed">{{ item.label }}</span>
+      </a>
+    </li>
+  </ul>
+
+  <!-- Logout -->
+  <div class="sidebar__footer">
+    <button class="logout-btn" (click)="logout()" [matTooltip]="collapsed ? 'Logout' : ''" matTooltipPosition="right">
+      <mat-icon>logout</mat-icon>
+      <span *ngIf="!collapsed">Logout</span>
+    </button>
+  </div>
+</nav>

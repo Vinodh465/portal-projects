@@ -1,0 +1,182 @@
+<mvc:View
+    controllerName="zshopfloor.controller.Dashboard"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:l="sap.ui.layout"
+    xmlns:tnt="sap.tnt"
+    xmlns:core="sap.ui.core"
+    xmlns:viz="sap.viz.ui5.controls"
+    xmlns:vizFrame="sap.viz.ui5.controls.common.feeds"
+    displayBlock="true">
+
+    <Page
+        id="idDashboardPage"
+        title="Shop Floor Management Portal"
+        showNavButton="false"
+        class="sfPage">
+
+        <!-- Header Actions -->
+        <headerContent>
+            <Select id="idPlantSelect" change="onPlantChange" selectedKey="1003" class="sfPlantSelect">
+                <items>
+                    <core:Item key="0001" text="Plant 0001"/>
+                    <core:Item key="1003" text="Plant 1003 (Main)"/>
+                    <core:Item key="1004" text="Plant 1004"/>
+                </items>
+            </Select>
+        </headerContent>
+
+        <content>
+            <VBox class="sfDashboardContainer">
+
+                <!-- Welcome Banner -->
+                <VBox class="sfWelcomeBanner">
+                    <HBox justifyContent="SpaceBetween" alignItems="Center">
+                        <VBox>
+                            <Title text="Dashboard Overview" level="H4" class="sfBrandSubtitle" />
+                            <Title text="Welcome back, {userModel>/userName}" level="H2" class="sfWelcomeTitle"/>
+                            <Text text="Real-time monitoring for Plant {dashModel>/selectedPlant}" class="sfWelcomeSub"/>
+                        </VBox>
+                        <VBox alignItems="End">
+                            <HBox alignItems="Center">
+                                <core:Icon src="sap-icon://calendar" class="sfDateIcon" size="1.2rem" color="#64748B"/>
+                                <Text id="idCurrentDate" class="sfCurrentDate" style="margin-left: 8px; font-weight: 500;"/>
+                            </HBox>
+                            <Text text="System Status: Operational" state="Success" style="font-size: 0.8rem; margin-top: 4px;"/>
+                        </VBox>
+                    </HBox>
+                </VBox>
+
+                <!-- KPI Tiles Row -->
+                <HBox class="sfKpiRow" wrap="Wrap" justifyContent="SpaceBetween">
+                    <GenericTile
+                        class="sfKpiTile sfKpiBlue"
+                        header="Total Planned Orders"
+                        subheader="Current: {dashModel>/CurrentMonth}/{dashModel>/CurrentYear}"
+                        press="onNavToPlannedOrders">
+                        <tileContent>
+                            <TileContent footer="Month: {dashModel>/PlanMonth} | Year: {dashModel>/PlanYear}">
+                                <content>
+                                    <NumericContent
+                                        value="{dashModel>/TotalPlannedOrders}"
+                                        icon="sap-icon://list"
+                                        valueColor="Good"
+                                        indicator="Up"
+                                        withMargin="false"/>
+                                </content>
+                            </TileContent>
+                        </tileContent>
+                    </GenericTile>
+
+                    <GenericTile
+                        class="sfKpiTile sfKpiGreen"
+                        header="Total Production Orders"
+                        subheader="Current: {dashModel>/CurrentMonth}/{dashModel>/CurrentYear}"
+                        press="onNavToProductionOrders">
+                        <tileContent>
+                            <TileContent footer="Month: {dashModel>/ProdMonth} | Year: {dashModel>/ProdYear}">
+                                <content>
+                                    <NumericContent
+                                        value="{dashModel>/TotalProductionOrders}"
+                                        icon="sap-icon://factory"
+                                        valueColor="Good"
+                                        indicator="Up"
+                                        withMargin="false"/>
+                                </content>
+                            </TileContent>
+                        </tileContent>
+                    </GenericTile>
+
+                    <GenericTile
+                        class="sfKpiTile sfKpiOrange"
+                        header="Planned Progress"
+                        subheader="Monthly Status">
+                        <tileContent>
+                            <TileContent footer="Month Plan: {dashModel>/PlanMonth}">
+                                <content>
+                                    <NumericContent
+                                        value="{dashModel>/PlanMonth}"
+                                        icon="sap-icon://pending"
+                                        valueColor="Critical"
+                                        withMargin="false"/>
+                                </content>
+                            </TileContent>
+                        </tileContent>
+                    </GenericTile>
+
+                    <GenericTile
+                        class="sfKpiTile sfKpiPurple"
+                        header="Production Progress"
+                        subheader="Monthly Status">
+                        <tileContent>
+                            <TileContent footer="Month Prod: {dashModel>/ProdMonth}">
+                                <content>
+                                    <NumericContent
+                                        value="{dashModel>/ProdMonth}"
+                                        icon="sap-icon://sys-enter-2"
+                                        valueColor="Good"
+                                        withMargin="false"/>
+                                </content>
+                            </TileContent>
+                        </tileContent>
+                    </GenericTile>
+
+                </HBox>
+                <!-- Orders Overview Row (Replaces Broken Charts) -->
+                <HBox class="sfChartsRow" wrap="Wrap">
+                    <VBox class="sfChartCard" width="100%">
+                        <Title text="Order Summary" level="H4" class="sfChartTitle"/>
+                        <List id="idOrderList" noDataText="No orders to display" class="sfOrderList">
+                            <StandardListItem 
+                                title="Open Orders" 
+                                info="{dashModel>/OpenOrders}" 
+                                infoState="Warning" 
+                                icon="sap-icon://pending"
+                                type="Navigation"
+                                press="onNavToPlannedOrders"/>
+                            <StandardListItem 
+                                title="Completed Orders" 
+                                info="{dashModel>/CompletedOrders}" 
+                                infoState="Success" 
+                                icon="sap-icon://sys-enter-2"
+                                type="Navigation"
+                                press="onNavToProductionOrders"/>
+                        </List>
+                    </VBox>
+                </HBox>
+
+                <!-- Navigation Quick Links -->
+                <VBox class="sfNavSection">
+                    <Title text="Quick Navigation" level="H4" class="sfSectionTitle"/>
+                    <HBox class="sfNavRow" wrap="Wrap">
+
+                        <VBox class="sfNavCard">
+                            <core:Icon src="sap-icon://list" size="2rem" color="#0854A0" class="sfNavIcon"/>
+                            <Title text="Planned Orders" level="H5" class="sfNavCardTitle"/>
+                            <Text text="View all planned production orders" class="sfNavCardText"/>
+                            <Button text="Open" type="Emphasized" press="onNavToPlannedOrders" class="sfNavBtn"/>
+                        </VBox>
+
+                        <VBox class="sfNavCard">
+                            <core:Icon src="sap-icon://factory" size="2rem" color="#107E3E" class="sfNavIcon"/>
+                            <Title text="Production Orders" level="H5" class="sfNavCardTitle"/>
+                            <Text text="Manage active production orders" class="sfNavCardText"/>
+                            <Button text="Open" type="Emphasized" press="onNavToProductionOrders" class="sfNavBtnGreen"/>
+                        </VBox>
+
+                    </HBox>
+                </VBox>
+
+            </VBox>
+        </content>
+
+        <!-- Footer busy indicator -->
+        <footer>
+            <Toolbar class="sfFooterBar">
+                <ToolbarSpacer/>
+                <Text id="idFooterStatus" text="Data loaded successfully" class="sfFooterText"/>
+            </Toolbar>
+        </footer>
+
+    </Page>
+</mvc:View>

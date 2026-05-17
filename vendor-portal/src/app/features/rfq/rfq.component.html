@@ -1,0 +1,19 @@
+<div class="page fade-in">
+  <div class="page-header">
+    <h1>Request for Quotations (RFQ)</h1>
+    <p>All RFQs assigned to your vendor account</p>
+  </div>
+  <div class="loading-state" *ngIf="loading">
+    <mat-icon class="spin">sync</mat-icon> Loading RFQs...
+  </div>
+  <div class="error-state" *ngIf="!loading && error">
+    <mat-icon>error_outline</mat-icon> {{ error }}
+  </div>
+  <app-reusable-table
+    *ngIf="!loading && !error"
+    [data]="data"
+    [columns]="columns"
+    title="RFQ List"
+    exportFileName="rfq_list"
+  ></app-reusable-table>
+</div>

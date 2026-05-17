@@ -1,0 +1,51 @@
+<div class="pdf-dialog">
+  <!-- Header -->
+  <div class="pdf-dialog__header">
+    <div class="header-info">
+      <mat-icon>picture_as_pdf</mat-icon>
+      <div>
+        <h2>{{ data.title || 'Invoice PDF' }}</h2>
+        <span>Document: {{ data.belnr }}</span>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button class="action-btn" (click)="download()" [disabled]="loading || !!error" matTooltip="Download PDF">
+        <mat-icon>download</mat-icon> Download
+      </button>
+      <button class="action-btn" (click)="print()" [disabled]="loading || !!error" matTooltip="Print PDF">
+        <mat-icon>print</mat-icon> Print
+      </button>
+      <button class="close-btn" (click)="close()">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+  </div>
+
+  <!-- Body -->
+  <div class="pdf-dialog__body">
+    <!-- Loader -->
+    <div class="pdf-loading" *ngIf="loading">
+      <mat-spinner diameter="48"></mat-spinner>
+      <p>Preparing PDF document...</p>
+    </div>
+
+    <!-- Error -->
+    <div class="pdf-error" *ngIf="!loading && error">
+      <mat-icon>error_outline</mat-icon>
+      <h3>Failed to load PDF</h3>
+      <p>{{ error }}</p>
+      <button class="action-btn" (click)="fetchPdf()">
+        <mat-icon>refresh</mat-icon> Retry
+      </button>
+    </div>
+
+    <!-- PDF iframe -->
+    <iframe
+      *ngIf="!loading && !error && pdfUrl"
+      id="pdf-frame"
+      [src]="pdfUrl"
+      class="pdf-frame"
+      frameborder="0"
+    ></iframe>
+  </div>
+</div>

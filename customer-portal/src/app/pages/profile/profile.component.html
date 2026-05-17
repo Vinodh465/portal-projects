@@ -1,0 +1,45 @@
+<app-navbar></app-navbar>
+<app-sidebar></app-sidebar>
+
+<main class="main-content">
+  <div class="page-header d-flex align-items-center" style="gap: 20px;">
+    <button class="back-btn" routerLink="/dashboard" style="margin: 0;">
+      <i class="bi bi-arrow-left"></i> Back to Dashboard
+    </button>
+    <h2 class="page-title m-0"><i class="bi bi-person-circle"></i> Customer Profile</h2>
+  </div>
+
+  <!-- Loading -->
+  <div class="content-loader" *ngIf="loading">
+    <div class="skeleton-card"></div>
+  </div>
+
+  <!-- Error -->
+  <div class="alert-error" *ngIf="error && !loading">
+    <i class="bi bi-exclamation-triangle-fill"></i> {{ error }}
+  </div>
+
+  <!-- Profile Card -->
+  <div class="profile-layout" *ngIf="!loading && !error">
+    <!-- Avatar card -->
+    <div class="avatar-card">
+      <div class="profile-avatar">{{ initials }}</div>
+      <h3 class="profile-name">{{ profile['NAME'] || profile['NAME1'] || auth.getCustName() }}</h3>
+      <p class="profile-id">ID: {{ profile['CUST_ID'] || profile['KUNNR'] || auth.getCustId() }}</p>
+      <div class="profile-tag">{{ profile['CITY'] || 'Customer' }}</div>
+    </div>
+
+    <!-- Detail fields -->
+    <div class="detail-card">
+      <div class="detail-grid">
+        <div class="detail-field" *ngFor="let f of profileFields">
+          <div class="field-icon"><i class="bi {{ f.icon }}"></i></div>
+          <div class="field-content">
+            <span class="field-label">{{ f.label }}</span>
+            <span class="field-value">{{ profile[f.key] || '—' }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>

@@ -1,0 +1,84 @@
+<div class="login-page">
+  <div class="login-bg-glow"></div>
+
+  <div class="login-card">
+    <!-- Brand Header -->
+    <div class="login-brand">
+      <div class="brand-icon-wrap">
+        <i class="bi bi-hexagon-half"></i>
+      </div>
+      <h1 class="login-title">SAP Customer Portal</h1>
+      <p class="login-subtitle">Sign in to access your secure dashboard</p>
+    </div>
+
+    <!-- Error Messaging -->
+    <div class="login-alert" *ngIf="error" role="alert">
+      <i class="bi bi-exclamation-circle-fill"></i>
+      <span>{{ error }}</span>
+    </div>
+
+    <!-- Login Form -->
+    <form (ngSubmit)="onSubmit()" #loginForm="ngForm" class="login-form" novalidate>
+      <div class="form-group">
+        <label for="custId" class="form-label">Customer ID</label>
+        <div class="input-wrap">
+          <i class="bi bi-person input-icon"></i>
+          <input
+            id="custId"
+            type="text"
+            class="form-input"
+            placeholder="Enter your customer ID"
+            [(ngModel)]="custId"
+            name="custId"
+            required
+            autocomplete="username"
+          />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="password" class="form-label">Password</label>
+        <div class="input-wrap">
+          <i class="bi bi-shield-lock input-icon"></i>
+          <input
+            id="password"
+            [type]="showPassword ? 'text' : 'password'"
+            class="form-input"
+            placeholder="Enter your password"
+            [(ngModel)]="password"
+            name="password"
+            required
+            autocomplete="current-password"
+          />
+          <button type="button" class="pwd-toggle" (click)="showPassword = !showPassword" title="Toggle password visibility">
+            <i class="bi" [class.bi-eye]="!showPassword" [class.bi-eye-slash]="showPassword"></i>
+          </button>
+        </div>
+      </div>
+
+      <button type="submit" class="login-btn" [disabled]="loading" id="btn-sign-in">
+        <span *ngIf="!loading">Sign In</span>
+        <ng-container *ngIf="loading">
+          <span class="btn-spinner"></span>
+          <span>Authenticating...</span>
+        </ng-container>
+      </button>
+
+      <!-- Dev Bypass: use when SAP customer credentials are not available -->
+      <button
+        type="button"
+        class="dev-bypass-btn"
+        *ngIf="error"
+        (click)="devBypass()"
+        id="btn-dev-bypass"
+        title="Skip SAP auth — for development only">
+        <i class="bi bi-bug"></i> Continue as Customer {{ custId || '?' }} (Dev Bypass)
+      </button>
+    </form>
+
+    <div class="login-footer">
+      <i class="bi bi-patch-check-fill"></i>
+      <span>Secured by SAP Enterprise Gateway</span>
+    </div>
+  </div>
+</div>

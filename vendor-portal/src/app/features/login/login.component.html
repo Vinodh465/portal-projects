@@ -1,0 +1,82 @@
+<div class="login-page">
+  <!-- Left Panel -->
+  <div class="login-page__left">
+    <div class="brand">
+      <div class="brand-logo">VP</div>
+      <h1>Vendor Portal</h1>
+      <p>Enterprise Procurement & Finance Management</p>
+    </div>
+
+    <div class="features">
+      <div class="feature-item" *ngFor="let f of features">
+        <div class="feature-icon">
+          <mat-icon>{{ f.icon }}</mat-icon>
+        </div>
+        <div>
+          <h4>{{ f.title }}</h4>
+          <p>{{ f.desc }}</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="powered">
+      <span>Powered by SAP OData</span>
+    </div>
+  </div>
+
+  <!-- Right Panel -->
+  <div class="login-page__right">
+    <div class="login-card">
+      <div class="login-card__header">
+        <div class="card-logo">VP</div>
+        <h2>Sign In</h2>
+        <p>Enter your vendor credentials to access the portal</p>
+      </div>
+
+      <form [formGroup]="form" (ngSubmit)="login()" class="login-form">
+        <!-- Vendor ID -->
+        <div class="form-group">
+          <label>Vendor ID</label>
+          <div class="input-wrapper" [class.error]="form.get('vendorId')?.invalid && form.get('vendorId')?.touched">
+            <mat-icon>badge</mat-icon>
+            <input type="text" formControlName="vendorId" placeholder="e.g. 100000" autocomplete="username" />
+          </div>
+          <span class="field-error" *ngIf="form.get('vendorId')?.hasError('required') && form.get('vendorId')?.touched">
+            Vendor ID is required
+          </span>
+        </div>
+
+        <!-- Password -->
+        <div class="form-group">
+          <label>Password</label>
+          <div class="input-wrapper" [class.error]="form.get('password')?.invalid && form.get('password')?.touched">
+            <mat-icon>lock</mat-icon>
+            <input [type]="showPassword ? 'text' : 'password'" formControlName="password" placeholder="Enter password" autocomplete="current-password" />
+            <button type="button" class="eye-btn" (click)="showPassword = !showPassword">
+              <mat-icon>{{ showPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+            </button>
+          </div>
+          <span class="field-error" *ngIf="form.get('password')?.hasError('required') && form.get('password')?.touched">
+            Password is required
+          </span>
+        </div>
+
+        <!-- Remember me -->
+        <div class="remember-row">
+          <mat-checkbox formControlName="remember" color="primary">Remember me</mat-checkbox>
+        </div>
+
+        <!-- Submit -->
+        <button type="submit" class="login-btn" [disabled]="loading">
+          <mat-spinner *ngIf="loading" diameter="20" color="accent"></mat-spinner>
+          <span *ngIf="!loading">Sign In</span>
+          <span *ngIf="loading">Authenticating...</span>
+        </button>
+      </form>
+
+      <p class="login-footer">
+        Secure SAP-integrated vendor management system
+      </p>
+    </div>
+  </div>
+</div>

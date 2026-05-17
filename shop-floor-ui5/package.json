@@ -1,0 +1,13 @@
+{
+  "name": "shop-floor-ui5",
+  "version": "1.0.0",
+  "description": "SAPUI5 Shop Floor Management Application",
+  "devDependencies": {
+    "@ui5/cli": "^3.0.0",
+    "@sap/ux-ui5-tooling": "1"
+  },
+  "scripts": {
+    "start": "ui5 serve --config ui5.yaml -o index.html",
+    "build": "ui5 build"
+  }
+}

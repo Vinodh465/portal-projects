@@ -1,0 +1,119 @@
+<mvc:View
+    controllerName="zshopfloor.controller.PlannedOrders"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    displayBlock="true">
+
+    <Page
+        id="idPlannedOrdersPage"
+        title="Planned Orders"
+        showNavButton="true"
+        navButtonPress="onNavBack"
+        class="sfPage">
+
+
+        <!-- Search and Filter Bar -->
+
+        <content>
+            <VBox class="sfTableContainer">
+
+                <!-- Record count info bar -->
+                <Toolbar class="sfInfoBar">
+                    <Text id="idRecordCount" text="Loading..." class="sfRecordCount"/>
+                    <ToolbarSpacer/>
+                </Toolbar>
+
+                <!-- Main Table -->
+                <Table
+                    id="idPlannedOrdersTable"
+                    items="{
+                        path: '/PlannedOrdersSet',
+                        templateShareable: true,
+                        operationMode: 'Client'
+                    }"
+                    growing="true"
+                    growingThreshold="25"
+                    growingScrollToLoad="true"
+                    noDataText="No planned orders found"
+                    busyIndicatorDelay="0"
+                    class="sfTable"
+                    updateFinished="onUpdateFinished"
+                    selectionChange="onSelectionChange"
+                    mode="None"
+                    fixedLayout="false">
+
+                    <headerToolbar>
+                        <Toolbar class="sfTableHeader">
+                            <Title text="Planned Orders" level="H4" class="sfTableTitle"/>
+                            <ToolbarSpacer/>
+                        </Toolbar>
+                    </headerToolbar>
+
+                    <columns>
+                        <Column width="11rem" hAlign="Begin" class="sfCol">
+                            <header><Label text="Planned Order" class="sfColHeader"/></header>
+                        </Column>
+                        <Column width="12rem" class="sfCol">
+                            <header><Label text="Material" class="sfColHeader"/></header>
+                        </Column>
+                        <Column width="8rem" class="sfCol">
+                            <header><Label text="Plant" class="sfColHeader"/></header>
+                        </Column>
+                        <Column width="10rem" class="sfCol">
+                            <header><Label text="Order Type" class="sfColHeader"/></header>
+                        </Column>
+                        <Column width="10rem" hAlign="End" class="sfCol">
+                            <header><Label text="Order Qty" class="sfColHeader"/></header>
+                        </Column>
+                        <Column width="8rem" hAlign="End" class="sfCol">
+                            <header><Label text="Unit" class="sfColHeader"/></header>
+                        </Column>
+                        <Column width="11rem" class="sfCol">
+                            <header><Label text="Basic Start Date" class="sfColHeader"/></header>
+                        </Column>
+                        <Column width="11rem" class="sfCol">
+                            <header><Label text="Basic End Date" class="sfColHeader"/></header>
+                        </Column>
+                    </columns>
+
+                    <items>
+                        <ColumnListItem
+                            type="Navigation"
+                            press="onRowPress"
+                            highlight="{
+                                path: 'Status',
+                                formatter: '.formatter.statusToHighlight'
+                            }">
+                            <cells>
+                                <ObjectIdentifier title="{Plnum}"/>
+                                <Text text="{Matnr}"/>
+                                <Text text="{Werks}"/>
+                                <Text text="{Dispo}"/>
+                                <ObjectNumber number="{Gsmng}" unit="{Meins}"/>
+                                <Text text="{Meins}"/>
+                                <Text text="{
+                                    path: 'Psttr',
+                                    formatter: '.formatter.formatDate'
+                                }"/>
+                                <Text text="{
+                                    path: 'Pedtr',
+                                    formatter: '.formatter.formatDate'
+                                }"/>
+                            </cells>
+                        </ColumnListItem>
+                    </items>
+
+                </Table>
+            </VBox>
+        </content>
+
+        <footer>
+            <Toolbar class="sfFooterBar">
+                <ToolbarSpacer/>
+                <Text id="idPlannedFooterText" text="" class="sfFooterText"/>
+            </Toolbar>
+        </footer>
+
+    </Page>
+</mvc:View>

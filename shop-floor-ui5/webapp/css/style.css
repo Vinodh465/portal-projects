@@ -1,0 +1,302 @@
+/* =============================================
+   SHOP FLOOR MANAGEMENT – Premium White Design
+   Clean, Professional, and Attractive
+   ============================================= */
+
+:root {
+    --sf-bg:            #FDFDFD;
+    --sf-card-bg:       #FFFFFF;
+    --sf-primary:       #0056D2; /* More vibrant blue */
+    --sf-success:       #107E3E;
+    --sf-warning:       #E97D04;
+    --sf-border:        #EDEDED;
+    --sf-text-primary:  #0F172A;
+    --sf-text-muted:    #64748B;
+    --sf-shadow:        0 4px 20px rgba(0, 0, 0, 0.04);
+    --sf-radius:        12px;
+}
+
+/* ---- Global Body ---- */
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+}
+
+.sfPage {
+    background: linear-gradient(135deg, #FFFFFF 0%, #F8FAFC 50%, #F1F5F9 100%) !important;
+    background-attachment: fixed !important;
+    position: relative;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+}
+
+/* Custom Scrollbar - Hidden by default, subtle on hover */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: transparent transparent;
+    transition: scrollbar-color 0.3s;
+}
+
+*:hover {
+    scrollbar-color: #CBD5E1 transparent;
+}
+
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: transparent;
+    border-radius: 10px;
+}
+
+*:hover::-webkit-scrollbar-thumb {
+    background: #CBD5E1;
+}
+
+.sfPage::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-image: radial-gradient(#E2E8F0 0.5px, transparent 0.5px);
+    background-size: 24px 24px;
+    opacity: 0.4;
+    pointer-events: none;
+}
+
+/* ================================================
+   LOGIN PAGE
+   ================================================ */
+.sfLoginPage {
+    background: #FFFFFF !important;
+}
+
+.sfLoginWrapper {
+    background: linear-gradient(135deg, #FFFFFF 0%, #F8FAFC 100%) !important;
+}
+
+.sfLoginCard {
+    background: #FFFFFF;
+    border: 1px solid #F1F5F9;
+    border-radius: 20px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.06);
+    padding: 48px;
+    width: 100%;
+    max-width: 440px;
+}
+
+.sfLoginLogo {
+    margin-bottom: 24px;
+}
+
+.sfBrandTitle {
+    color: var(--sf-text-primary) !important;
+    font-weight: 800 !important;
+    letter-spacing: -0.5px;
+}
+
+.sfBrandSubtitle {
+    color: var(--sf-text-muted) !important;
+    font-size: 0.9rem !important;
+}
+
+.sfInput .sapMInputBaseInner {
+    border-radius: 8px !important;
+    border: 1px solid #E2E8F0 !important;
+    padding: 12px 16px !important;
+    height: 48px !important;
+    font-size: 1rem !important;
+}
+
+.sfLoginBtn {
+    height: 48px !important;
+    border-radius: 8px !important;
+    font-weight: 600 !important;
+    background-color: var(--sf-primary) !important;
+    box-shadow: 0 4px 12px rgba(0, 86, 210, 0.2) !important;
+}
+
+/* ================================================
+   DASHBOARD
+   ================================================ */
+.sfDashboardContainer {
+    padding: 24px;
+    width: 100%;
+}
+
+.sfTableContainer {
+    padding: 32px;
+    background: #FFFFFF !important;
+    border-radius: var(--sf-radius);
+    box-shadow: var(--sf-shadow);
+    overflow-x: auto; /* Enable horizontal scrolling */
+}
+
+.sfWelcomeBanner {
+    background: #FFFFFF !important;
+    border: 1px solid #F1F5F9 !important;
+    border-radius: var(--sf-radius) !important;
+    padding: 32px;
+    margin-bottom: 32px;
+    box-shadow: var(--sf-shadow);
+}
+
+.sfWelcomeTitle {
+    color: var(--sf-text-primary) !important;
+    font-weight: 700 !important;
+}
+
+/* KPI Tiles - Modern SaaS Style */
+.sfKpiTile {
+    background: #FFFFFF !important;
+    border: 1px solid #F1F5F9 !important;
+    border-radius: var(--sf-radius) !important;
+    box-shadow: var(--sf-shadow) !important;
+    padding: 16px !important;
+    transition: transform 0.2s, box-shadow 0.2s !important;
+    margin: 8px !important;
+    flex: 1 1 calc(25% - 16px) !important;
+    min-width: 280px !important;
+}
+
+.sfKpiTile:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08) !important;
+}
+
+/* Chart/Summary Card */
+.sfChartCard {
+    background: #FFFFFF !important;
+    border: 1px solid #F1F5F9 !important;
+    border-radius: var(--sf-radius) !important;
+    padding: 32px;
+    box-shadow: var(--sf-shadow);
+    margin-top: 32px;
+}
+
+.sfChartTitle {
+    color: var(--sf-text-primary) !important;
+    font-weight: 700 !important;
+    margin-bottom: 24px !important;
+}
+
+.sfOrderList {
+    background: transparent !important;
+}
+
+.sfOrderList .sapMLIB {
+    border-bottom: 1px solid #F1F5F9 !important;
+    padding: 12px 0 !important;
+}
+
+.sfOrderList .sapMLIB:last-child {
+    border-bottom: none !important;
+}
+
+.sfOrderList .sapMSLITitle {
+    font-weight: 600 !important;
+    color: var(--sf-text-primary) !important;
+}
+
+/* Navigation Cards */
+.sfNavCard {
+    background: #FFFFFF !important;
+    border: 1px solid #F1F5F9 !important;
+    border-radius: var(--sf-radius) !important;
+    padding: 32px;
+    margin: 12px;
+    box-shadow: var(--sf-shadow);
+    transition: all 0.2s;
+}
+
+.sfNavCard:hover {
+    border-color: var(--sf-primary);
+}
+
+.sfNavIcon {
+    margin-bottom: 16px;
+}
+
+/* Buttons */
+.sfNavBtn, .sfNavBtnGreen {
+    border-radius: 8px !important;
+    height: 40px !important;
+    font-weight: 500 !important;
+}
+
+/* Select Control */
+.sfPlantSelect .sapMSelectInner {
+    border-radius: 8px !important;
+    background: #FFFFFF !important;
+    border: 1px solid #E2E8F0 !important;
+}
+
+/* Footer Status */
+.sfFooterBar {
+    background: #FFFFFF !important;
+    border-top: 1px solid #F1F5F9 !important;
+}
+
+/* Interactive Table Headers */
+.sfColHeaderBtn {
+    font-weight: 700 !important;
+    color: var(--sf-text) !important;
+    font-size: 0.875rem !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    transition: all 0.2s;
+}
+
+.sfColHeaderBtn:hover {
+    color: var(--sf-primary) !important;
+    background: rgba(var(--sf-primary-rgb), 0.05) !important;
+}
+
+.sfColHeaderBtn .sapMBtnInner {
+    background: transparent !important;
+    border: none !important;
+}
+
+/* Sidebar and Header styles */
+.sfAppTitle {
+    color: #1b6ec2 !important;
+    font-weight: bold !important;
+    font-size: 1.2rem !important;
+}
+
+
+/* Card and Dashboard styles */
+.sfCard {
+    margin: 0.5rem;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08) !important;
+    border-radius: 8px !important;
+    overflow: hidden;
+    height: 100%; /* Ensure equal height in grid */
+}
+
+.sfCardFull {
+    margin: 0.5rem 1rem 0.5rem 0.5rem; /* Extra margin on right for 'finishing' */
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08) !important;
+    border-radius: 8px !important;
+    border-right: 1px solid #E2E8F0 !important;
+}
+
+.sfKpiTile {
+    border-radius: 12px !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05) !important;
+}
+
+.sfTableCompact .sapMListTblCell {
+    padding: 0.5rem !important;
+}
+
+/* Side Navigation Overrides */
+.sapTntSideNavigation {
+    background-color: #ffffff !important;
+    border-right: 1px solid #e5e5e5 !important;
+}
+
+.sapTntNavListItem {
+    height: 3rem !important;
+}

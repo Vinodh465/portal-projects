@@ -1,0 +1,131 @@
+<app-navbar></app-navbar>
+<app-sidebar></app-sidebar>
+
+<main class="main-content">
+  <div class="page-header d-flex align-items-center" style="gap: 20px;" *ngIf="!showForm">
+    <button class="back-btn" routerLink="/dashboard" style="margin: 0;">
+      <i class="bi bi-arrow-left"></i> Back to Dashboard
+    </button>
+    <h2 class="page-title m-0"><i class="bi bi-cash-stack"></i> Finance</h2>
+  </div>
+
+  <!-- Alerts -->
+  <div class="alert-error"   *ngIf="error">    <i class="bi bi-exclamation-triangle-fill"></i> {{ error }}</div>
+  <div class="alert-error"   *ngIf="pdfError">  <i class="bi bi-exclamation-triangle-fill"></i> {{ pdfError }}</div>
+  <div class="alert-success" *ngIf="pdfSuccess"> <i class="bi bi-check-circle-fill"></i> {{ pdfSuccess }}</div>
+
+  <!-- PDF Info card shown when data service is unavailable -->
+  <div class="info-card" *ngIf="!loading && error && !pdfError && !pdfLoading">
+    <div class="info-card-icon"><i class="bi bi-file-earmark-text"></i></div>
+    <div class="info-card-body">
+      <h4>Your account statement is available as a PDF</h4>
+      <p>Click <strong>View Account Statement</strong> above to open your full customer account statement in a new tab.</p>
+    </div>
+  </div>
+
+  <div class="tabs-bar" *ngIf="!showForm">
+    <button class="tab-btn" [class.active]="activeTab === 'invoices'" (click)="setActiveTab('invoices')">
+      <i class="bi bi-receipt"></i> Invoices
+      <span class="tab-badge" *ngIf="!loading && invoices.length">{{ invoices.length }}</span>
+    </button>
+    <button class="tab-btn" [class.active]="activeTab === 'aging'" (click)="setActiveTab('aging')">
+      <i class="bi bi-clock-history"></i> Payment and Aging
+      <span class="tab-badge" *ngIf="!loading && agingItems.length">{{ agingItems.length }}</span>
+    </button>
+    <button class="tab-btn" [class.active]="activeTab === 'memos'" (click)="setActiveTab('memos')">
+      <i class="bi bi-file-earmark-diff"></i> Credit and Debit Memo
+      <span class="tab-badge" *ngIf="!loading && creditMemos.length">{{ creditMemos.length }}</span>
+    </button>
+  </div>
+
+  <!-- Loading State -->
+  <div class="loading-state" *ngIf="loading">
+    <div class="spinner"></div>
+    <p>Loading finance data from SAP...</p>
+  </div>
+
+  <!-- Table Section -->
+  <div class="table-card" *ngIf="!loading && !showForm">
+    <!-- Invoice Details -->
+    <app-reusable-table 
+      *ngIf="activeTab === 'invoices'"
+      [columns]="invoiceColumns" 
+      [data]="invoices" 
+      [enableFilters]="true"
+      emptyMessage="No invoice records found."
+      [actionConfig]="{ label: 'View Details', icon: 'bi-eye-fill', showLabel: false }"
+      (actionClicked)="onInvoiceAction($event)">
+    </app-reusable-table>
+
+    <!-- Payment and Aging -->
+    <div *ngIf="activeTab === 'aging'" class="fade-in">
+      <app-reusable-table 
+        [columns]="agingColumns" 
+        [data]="agingItems" 
+        [enableFilters]="true"
+        emptyMessage="No payment or aging data available.">
+      </app-reusable-table>
+    </div>
+
+    <!-- Credit and Debit Memo -->
+    <div *ngIf="activeTab === 'memos'" class="fade-in">
+      <app-reusable-table 
+        [columns]="memoColumns" 
+        [data]="creditMemos" 
+        [enableFilters]="true"
+        emptyMessage="No credit or debit memos found.">
+      </app-reusable-table>
+    </div>
+  </div>
+
+  <!-- Invoice Form (Detail View) -->
+  <div class="detail-overlay fade-in" *ngIf="showForm && selectedInvoice">
+    <div class="detail-card-header">
+      <button class="back-btn" (click)="closeForm()">
+        <i class="bi bi-arrow-left"></i> Back to List
+      </button>
+      <h3 class="detail-title">Invoice Detail Form</h3>
+    </div>
+
+    <div class="detail-grid-container">
+      <!-- Section 1: Header Info -->
+      <div class="form-section">
+        <h4 class="section-title">Invoice Details</h4>
+        <div class="detail-grid">
+          <div class="detail-field">
+            <span class="field-label">Invoice / Doc Number</span>
+            <span class="field-value highlight">{{ selectedInvoice.INVOICE_NO || selectedInvoice.DOC_NO }}</span>
+          </div>
+          <div class="detail-field">
+            <span class="field-label">Customer ID</span>
+            <span class="field-value">{{ selectedInvoice.CUSTOMER_ID }}</span>
+          </div>
+          <div class="detail-field">
+            <span class="field-label">Customer Name</span>
+            <span class="field-value">{{ selectedInvoice.CUSTOMER_NAME || '—' }}</span>
+          </div>
+          <div class="detail-field">
+            <span class="field-label">Posting / Invoice Date</span>
+            <span class="field-value">{{ selectedInvoice.INVOICE_DATE || selectedInvoice.POSTING_DATE }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="detail-actions" style="display: flex; flex-direction: column; gap: 10px; align-items: flex-end;">
+      <!-- Show errors/success locally inside the form -->
+      <div *ngIf="pdfError" class="alert-error" style="width: 100%; margin: 0; padding: 10px; font-size: 14px;">
+        <i class="bi bi-exclamation-triangle-fill"></i> {{ pdfError }}
+      </div>
+      <div *ngIf="pdfSuccess" class="alert-success" style="width: 100%; margin: 0; padding: 10px; font-size: 14px;">
+        <i class="bi bi-check-circle-fill"></i> {{ pdfSuccess }}
+      </div>
+
+      <button class="btn-primary" (click)="openStatement(selectedInvoice)" [disabled]="pdfLoading">
+        <span *ngIf="pdfLoading" class="btn-spinner" style="border-top-color: white; border-right-color: white; border-bottom-color: white;"></span>
+        <i *ngIf="!pdfLoading" class="bi bi-file-earmark-pdf"></i>
+        {{ pdfLoading ? 'Downloading PDF...' : 'Download PDF Invoice' }}
+      </button>
+    </div>
+  </div>
+</main>

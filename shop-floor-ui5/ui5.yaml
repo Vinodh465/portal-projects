@@ -1,0 +1,24 @@
+specVersion: "3.0"
+metadata:
+  name: shop-floor-ui5
+type: application
+server:
+  customMiddleware:
+    - name: fiori-tools-proxy
+      afterMiddleware: compression
+      configuration:
+        ignoreCertErrors: true
+        ui5:
+          path:
+            - /resources
+            - /test-resources
+          url: https://ui5.sap.com
+          version: "1.108.38"
+        backend:
+          - path: /sap
+            url: http://AZKTLDS5CP.kcloud.com:8000
+            client: "100"
+            authenticationType: basic
+            credentials:
+              username: "K902093"
+              password: "Vinodh@5284456"

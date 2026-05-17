@@ -1,0 +1,19 @@
+<div class="page fade-in">
+  <div class="page-header">
+    <h1>Credit / Debit Memos</h1>
+    <p>Financial adjustment documents from SAP</p>
+  </div>
+  <div class="loading-state" *ngIf="loading">
+    <mat-icon class="spin">sync</mat-icon> Loading Memos...
+  </div>
+  <div class="error-state" *ngIf="!loading && error">
+    <mat-icon>error_outline</mat-icon> {{ error }}
+  </div>
+  <app-reusable-table
+    *ngIf="!loading && !error"
+    [data]="data"
+    [columns]="columns"
+    title="Credit / Debit Memos"
+    exportFileName="credit_debit_memos"
+  ></app-reusable-table>
+</div>

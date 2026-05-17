@@ -1,0 +1,41 @@
+<header class="topbar">
+  <div class="topbar__left">
+    <button class="menu-btn" (click)="toggleSidebar.emit()">
+      <mat-icon>menu</mat-icon>
+    </button>
+    <div class="breadcrumb">
+      <span class="app-name">Vendor Portal</span>
+    </div>
+  </div>
+
+  <div class="topbar__right">
+
+    <!-- Back to Dashboard (Only on sub-pages) -->
+    <button *ngIf="!isDashboard" class="back-btn" [routerLink]="'/dashboard'" matTooltip="Back to Dashboard">
+      <mat-icon>arrow_back</mat-icon>
+      <span>Back to Dashboard</span>
+    </button>
+
+    <!-- Profile Menu -->
+    <button class="profile-btn" [matMenuTriggerFor]="profileMenu">
+      <div class="avatar">{{ (auth.vendorName() || 'V')[0].toUpperCase() }}</div>
+      <div class="profile-info">
+        <span class="name">{{ auth.vendorName() }}</span>
+        <span class="role">Vendor</span>
+      </div>
+      <mat-icon>expand_more</mat-icon>
+    </button>
+
+    <mat-menu #profileMenu="matMenu" class="profile-menu">
+      <button mat-menu-item [routerLink]="'/profile'">
+        <mat-icon>person</mat-icon>
+        <span>My Profile</span>
+      </button>
+      <mat-divider></mat-divider>
+      <button mat-menu-item (click)="auth.logout()">
+        <mat-icon style="color:#c62828">logout</mat-icon>
+        <span style="color:#c62828">Logout</span>
+      </button>
+    </mat-menu>
+  </div>
+</header>

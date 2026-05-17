@@ -1,0 +1,92 @@
+.pdf-dialog {
+  display: flex;
+  flex-direction: column;
+  height: 85vh;
+  min-width: 860px;
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border-color);
+    background: var(--bg-canvas);
+
+    .header-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      mat-icon { font-size: 28px; color: var(--color-error); }
+      h2 { font-size: 16px; font-weight: 700; color: var(--text-primary); }
+      span { font-size: 12px; color: var(--text-muted); }
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+  }
+
+  &__body {
+    flex: 1;
+    overflow: hidden;
+    position: relative;
+  }
+}
+
+.action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-primary);
+  background: none;
+  color: var(--color-primary);
+  cursor: pointer;
+  font-size: 13px;
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
+  transition: var(--transition);
+  mat-icon { font-size: 16px; }
+  &:hover:not([disabled]) { background: var(--color-primary); color: #fff; }
+  &[disabled] { opacity: 0.4; cursor: not-allowed; }
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  color: var(--text-secondary);
+  transition: var(--transition);
+  &:hover { background: var(--color-error-bg); color: var(--color-error); }
+}
+
+.pdf-frame {
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+.pdf-loading, .pdf-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  gap: 16px;
+  color: var(--text-muted);
+  p { font-size: 14px; }
+}
+
+.pdf-error {
+  mat-icon { font-size: 56px; width: 56px; height: 56px; color: var(--color-error); opacity: 0.5; }
+  h3 { font-size: 18px; color: var(--text-primary); }
+}

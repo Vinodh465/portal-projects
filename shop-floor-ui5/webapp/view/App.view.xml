@@ -1,0 +1,45 @@
+<mvc:View
+    controllerName="zshopfloor.controller.App"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:tnt="sap.tnt"
+    displayBlock="true">
+    <tnt:ToolPage id="idToolPage" sideExpanded="{userModel>/sideMenuExpanded}">
+        <tnt:header>
+            <tnt:ToolHeader>
+                <Button
+                    icon="sap-icon://menu2"
+                    type="Transparent"
+                    press="onSideNavButtonPress"
+                    visible="{userModel>/sideMenuVisible}"/>
+                <ToolbarSpacer width="10px"/>
+                <Title text="Shop Floor Management" level="H1" class="sfAppTitle"/>
+                <ToolbarSpacer/>
+                <Button
+                    icon="sap-icon://log"
+                    text="Logout"
+                    type="Transparent"
+                    press="onLogout"
+                    visible="{userModel>/sideMenuVisible}"/>
+            </tnt:ToolHeader>
+        </tnt:header>
+        <tnt:sideContent>
+            <tnt:SideNavigation
+                id="idSideNavigation"
+                expanded="{userModel>/sideMenuExpanded}"
+                itemSelect="onSideItemSelect"
+                visible="{userModel>/sideMenuVisible}">
+                <tnt:NavigationList>
+                    <tnt:NavigationListItem text="Dashboard" icon="sap-icon://grid" key="dashboard"/>
+                    <tnt:NavigationListItem text="Planned Orders" icon="sap-icon://fob-watch" key="plannedOrders"/>
+                    <tnt:NavigationListItem text="Production Orders" icon="sap-icon://factory" key="productionOrders"/>
+                    <tnt:NavigationListItem text="Comparison View" icon="sap-icon://compare" key="comparison"/>
+                </tnt:NavigationList>
+            </tnt:SideNavigation>
+        </tnt:sideContent>
+        <tnt:mainContents>
+            <App id="idAppControl">
+            </App>
+        </tnt:mainContents>
+    </tnt:ToolPage>
+</mvc:View>

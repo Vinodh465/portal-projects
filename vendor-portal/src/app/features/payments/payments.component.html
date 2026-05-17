@@ -1,0 +1,41 @@
+<div class="page fade-in">
+  <div class="page-header">
+    <h1>Payments & Aging</h1>
+    <p>Payment aging analysis and outstanding dues</p>
+  </div>
+
+  <!-- Aging Buckets -->
+  <div class="aging-buckets" *ngIf="!loading">
+    <div class="bucket-card" *ngFor="let b of agingBuckets" [style.border-top-color]="b.color">
+      <p class="bucket-label">{{ b.label }}</p>
+      <h2 class="bucket-count" [style.color]="b.color">{{ b.count }}</h2>
+      <p class="bucket-amount">{{ b.amount | number:'1.2-2' }}</p>
+    </div>
+  </div>
+
+  <!-- Aging Chart -->
+  <div class="chart-card" *ngIf="!loading && data.length">
+    <div class="chart-card__header">
+      <h3>Aging Distribution</h3>
+      <span>Amount by aging bucket</span>
+    </div>
+    <div style="height: 220px; position: relative;">
+      <canvas baseChart [data]="barChartData" [options]="barChartOptions" type="bar"></canvas>
+    </div>
+  </div>
+
+  <div class="loading-state" *ngIf="loading">
+    <mat-icon class="spin">sync</mat-icon> Loading Payments...
+  </div>
+  <div class="error-state" *ngIf="!loading && error">
+    <mat-icon>error_outline</mat-icon> {{ error }}
+  </div>
+
+  <app-reusable-table
+    *ngIf="!loading && !error"
+    [data]="data"
+    [columns]="columns"
+    title="Payment Aging Details"
+    exportFileName="payment_aging"
+  ></app-reusable-table>
+</div>

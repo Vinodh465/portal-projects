@@ -1,0 +1,90 @@
+<mvc:View
+    controllerName="zshopfloor.controller.Login"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:l="sap.ui.layout"
+    xmlns:f="sap.ui.layout.form"
+    xmlns:core="sap.ui.core"
+    displayBlock="true">
+
+    <Page showHeader="false" backgroundDesign="Solid" class="sfLoginPage">
+        <content>
+            <VBox class="sfLoginWrapper" justifyContent="Center" alignItems="Center" height="100%">
+                
+                <VBox class="sfLoginCard" alignItems="Stretch">
+                    
+                    <!-- Branding -->
+                    <VBox alignItems="Center" class="sfLoginLogo">
+                        <core:Icon src="sap-icon://factory" size="4rem" color="#0056D2"/>
+                        <VBox class="sfLoginBrandText" alignItems="Center">
+                            <Title text="Shop Floor" level="H1" class="sfBrandTitle"/>
+                            <Label text="Management System" class="sfBrandSubtitle"/>
+                        </VBox>
+                    </VBox>
+
+                    <Title text="Sign In" level="H3" textAlign="Center" class="sfLoginCardTitle" style="margin-top: 1rem;"/>
+                    <Text text="Please enter your employee credentials" textAlign="Center" class="sfLoginCardSubtitle" style="margin-bottom: 2rem;"/>
+
+                    <!-- User ID -->
+                    <VBox class="sfFormField" style="margin-bottom: 1.5rem;">
+                        <Label text="User ID" required="true" class="sfFieldLabel" style="font-weight: 600;"/>
+                        <Input
+                            id="idUserId"
+                            placeholder="Employee ID"
+                            value="{loginModel>/userId}"
+                            maxLength="12"
+                            class="sfInput"
+                            submit="onLogin"
+                            autocomplete="off"/>
+                    </VBox>
+
+                    <!-- Password -->
+                    <VBox class="sfFormField" style="margin-bottom: 2rem;">
+                        <Label text="Password" required="true" class="sfFieldLabel" style="font-weight: 600;"/>
+                        <Input
+                            id="idPassword"
+                            placeholder="Password"
+                            value="{loginModel>/password}"
+                            maxLength="40"
+                            type="Password"
+                            autocomplete="off"
+                            class="sfInput"
+                            submit="onLogin"/>
+                    </VBox>
+
+                    <!-- Error Message Strip -->
+                    <MessageStrip
+                        id="idErrorStrip"
+                        text="{loginModel>/errorMessage}"
+                        type="Error"
+                        showIcon="true"
+                        visible="{= !!${loginModel>/errorMessage} }"
+                        class="sfErrorStrip"
+                        style="margin-bottom: 1.5rem;"/>
+
+                    <!-- Login Button -->
+                    <Button
+                        id="idLoginBtn"
+                        text="Continue to Dashboard"
+                        type="Emphasized"
+                        press="onLogin"
+                        class="sfLoginBtn"
+                        enabled="{= !${loginModel>/busy} }"/>
+
+                    <!-- Busy Indicator -->
+                    <BusyIndicator
+                        id="idLoginBusy"
+                        visible="{loginModel>/busy}"
+                        size="1.5rem"
+                        class="sfBusyIndicator"
+                        style="margin-top: 1rem;"/>
+
+                </VBox>
+
+                <!-- Footer -->
+                <Text text="© 2024 Global Manufacturing Corp | Protected System" class="sfLoginFooter" style="margin-top: 2rem; color: #94A3B8; font-size: 0.8rem;"/>
+
+            </VBox>
+        </content>
+    </Page>
+</mvc:View>

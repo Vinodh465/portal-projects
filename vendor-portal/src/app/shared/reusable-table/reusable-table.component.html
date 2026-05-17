@@ -1,0 +1,81 @@
+<div class="rt-wrapper">
+  <!-- Toolbar -->
+  <div class="rt-toolbar">
+    <div class="rt-toolbar__left">
+      <h3 *ngIf="title">{{ title }}</h3>
+      <span class="rt-count">{{ dataSource.filteredData.length }} records</span>
+    </div>
+    <div class="rt-toolbar__right">
+      <!-- Search -->
+      <div class="search-box">
+        <mat-icon>search</mat-icon>
+        <input
+          type="text"
+          [(ngModel)]="searchQuery"
+          (ngModelChange)="applySearch()"
+          placeholder="Search..."
+        />
+        <button *ngIf="searchQuery" (click)="searchQuery=''; applySearch()" class="clear-btn">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+      <!-- Export -->
+      <button class="export-btn" (click)="exportExcel()" matTooltip="Export to Excel">
+        <mat-icon>download</mat-icon>
+        Export
+      </button>
+    </div>
+  </div>
+
+  <!-- Table -->
+  <div class="rt-table-container">
+    <table mat-table [dataSource]="dataSource" matSort class="rt-table">
+      <ng-container *ngFor="let col of columns" [matColumnDef]="col.key">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ col.label }}</th>
+        <td mat-cell *matCellDef="let row">
+          <!-- Status chip -->
+          <ng-container *ngIf="col.type === 'status'">
+            <span [class]="getStatusClass(row[col.key])">{{ row[col.key] || '—' }}</span>
+          </ng-container>
+          <!-- Amount -->
+          <ng-container *ngIf="col.type === 'amount'">
+            <span class="amount">{{ row[col.key] | number:'1.2-2' }}</span>
+          </ng-container>
+          <!-- Action -->
+          <ng-container *ngIf="col.type === 'action'">
+            <button class="action-btn">
+              <mat-icon>{{ col.actionIcon || 'visibility' }}</mat-icon>
+              {{ col.actionLabel || 'View' }}
+            </button>
+          </ng-container>
+          <!-- Date -->
+          <ng-container *ngIf="col.type === 'date'">
+            {{ row[col.key] | sapDate }}
+          </ng-container>
+          <!-- Default text -->
+          <ng-container *ngIf="!col.type || col.type === 'text'">
+            {{ row[col.key] || '—' }}
+          </ng-container>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="rt-row"></tr>
+
+      <!-- No data -->
+      <tr class="mat-row" *matNoDataRow>
+        <td [attr.colspan]="columns.length" class="no-data">
+          <mat-icon>inbox</mat-icon>
+          <p>No records found</p>
+        </td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- Paginator -->
+  <mat-paginator
+    [pageSizeOptions]="[10, 25, 50, 100]"
+    [pageSize]="10"
+    showFirstLastButtons
+  ></mat-paginator>
+</div>

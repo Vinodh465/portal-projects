@@ -1,0 +1,49 @@
+name: sap_maintenance_app
+description: SAP Maintenance Portal - Enterprise Mobile Application
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # State Management
+  flutter_riverpod: ^2.5.1
+
+  # HTTP Client
+  dio: ^5.4.3+1
+
+  # Charts
+  fl_chart: ^0.68.0
+
+  # Environment Variables
+  flutter_dotenv: ^5.1.0
+
+  # Storage
+  shared_preferences: ^2.2.3
+
+  # UI & Animations
+  shimmer: ^3.0.0
+  lottie: ^3.1.2
+  flutter_animate: ^4.5.0
+
+  # Icons
+  cupertino_icons: ^1.0.6
+
+  # Utils
+  intl: ^0.19.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - .env
+    - assets/lottie/

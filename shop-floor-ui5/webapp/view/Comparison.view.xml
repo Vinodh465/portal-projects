@@ -1,0 +1,120 @@
+<mvc:View
+    controllerName="zshopfloor.controller.Comparison"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:f="sap.f"
+    xmlns:card="sap.f.cards"
+    xmlns:core="sap.ui.core"
+    xmlns:layout="sap.ui.layout"
+    xmlns:mc="sap.suite.ui.microchart"
+    displayBlock="true">
+
+    <Page id="idComparisonPage" title="Production vs Planned Comparison" class="sfPage" showNavButton="true" navButtonPress="onNavBack">
+        <content>
+            <VBox width="100%" class="sapUiSmallMargin">
+                <items>
+                    
+                    <!-- KPI Header -->
+                    <HBox justifyContent="Start" class="sfKpiContainer sapUiSmallMarginBottom">
+                        <GenericTile class="sapUiTinyMargin sfKpiTile" header="Planned" subheader="Total Orders" press="onPlannedPress">
+                            <TileContent>
+                                <NumericContent value="{compModel>/plannedCount}" valueColor="Neutral" />
+                            </TileContent>
+                        </GenericTile>
+                        <GenericTile class="sapUiTinyMargin sfKpiTile" header="Production" subheader="Total Orders" press="onProdPress">
+                            <TileContent>
+                                <NumericContent value="{compModel>/productionCount}" valueColor="Good" />
+                            </TileContent>
+                        </GenericTile>
+                    </HBox>
+
+                    <!-- Plant Analysis Section -->
+                    <f:Card class="sfCardFull sapUiSmallMarginBottom">
+                        <f:header>
+                            <card:Header title="Plant Analysis" subtitle="Order Distribution by Plant" iconSrc="sap-icon://functional-location" />
+                        </f:header>
+                        <f:content>
+                            <Table id="idPlantComparisonTable" class="sfTableCompact" fixedLayout="false">
+                                <columns>
+                                    <Column width="auto"><Text text="Plant" /></Column>
+                                    <Column hAlign="Center"><Text text="Planned Count" /></Column>
+                                    <Column hAlign="Center"><Text text="Production Count" /></Column>
+                                    <Column hAlign="Center"><Text text="Total" /></Column>
+                                </columns>
+                                <items>
+                                    <!-- Items will be populated in controller -->
+                                </items>
+                            </Table>
+                        </f:content>
+                    </f:Card>
+
+                    <layout:Grid defaultSpan="XL6 L6 M12 S12" class="sfGrid">
+                        <layout:content>
+                            <!-- Planned Orders Card -->
+                            <f:Card class="sfCard">
+                                <f:header>
+                                    <card:Header title="Planned Overview" subtitle="Top 5 Upcoming" iconSrc="sap-icon://fob-watch" />
+                                </f:header>
+                                <f:content>
+                                    <Table items="{path: 'compModel>/plannedOrders', length: 5}" class="sfTableCompact">
+                                        <columns>
+                                            <Column><Text text="Order" /></Column>
+                                            <Column><Text text="Plant" /></Column>
+                                            <Column><Text text="Material" /></Column>
+                                            <Column hAlign="End"><Text text="Qty" /></Column>
+                                        </columns>
+                                        <items>
+                                            <ColumnListItem>
+                                                <cells>
+                                                    <Text text="{compModel>Plnum}" />
+                                                    <Text text="{compModel>Werks}" />
+                                                    <Text text="{compModel>Matnr}" />
+                                                    <Text text="{compModel>Gsmng}" />
+                                                </cells>
+                                            </ColumnListItem>
+                                        </items>
+                                    </Table>
+                                </f:content>
+                            </f:Card>
+
+                            <!-- Production Orders Card -->
+                            <f:Card class="sfCard">
+                                <f:header>
+                                    <card:Header title="Current Production" subtitle="Top 5 Active" iconSrc="sap-icon://factory" />
+                                </f:header>
+                                <f:content>
+                                    <Table items="{path: 'compModel>/productionOrders', length: 5}" class="sfTableCompact">
+                                        <columns>
+                                            <Column><Text text="Order" /></Column>
+                                            <Column><Text text="Type" /></Column>
+                                            <Column><Text text="Start Date" /></Column>
+                                            <Column hAlign="End"><Text text="Finish Date" /></Column>
+                                        </columns>
+                                        <items>
+                                            <ColumnListItem>
+                                                <cells>
+                                                    <Text text="{compModel>Aufnr}" />
+                                                    <Text text="{compModel>Auart}" />
+                                                    <Text text="{
+                                                        path: 'compModel>Gstrp',
+                                                        formatter: '.formatter.formatDate'
+                                                    }" />
+                                                    <Text text="{
+                                                        path: 'compModel>Gltrp',
+                                                        formatter: '.formatter.formatDate'
+                                                    }" />
+                                                </cells>
+                                            </ColumnListItem>
+                                        </items>
+                                    </Table>
+                                </f:content>
+                            </f:Card>
+                        </layout:content>
+                    </layout:Grid>
+
+
+                </items>
+            </VBox>
+        </content>
+    </Page>
+</mvc:View>

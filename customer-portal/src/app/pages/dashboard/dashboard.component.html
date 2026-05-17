@@ -1,0 +1,80 @@
+<app-navbar></app-navbar>
+<app-sidebar></app-sidebar>
+
+<main class="main-content">
+  <!-- Page Header -->
+  <div class="page-header">
+    <div>
+      <h2 class="page-title">Welcome back, <span class="highlight">{{ custName }}</span> 👋</h2>
+      <p class="page-subtitle">{{ currentTime }}</p>
+    </div>
+    <div class="cust-id-badge">
+      <i class="bi bi-person-badge"></i> {{ custId }}
+    </div>
+  </div>
+
+  <!-- Summary Cards -->
+  <div class="cards-grid">
+    <a *ngFor="let card of cards" [routerLink]="card.route" class="summary-card {{ card.colorClass }}">
+      <div class="card-icon-wrap">
+        <i class="bi {{ card.icon }}"></i>
+      </div>
+      <div class="card-body-content">
+        <p class="card-label">{{ card.title }}</p>
+        <p class="card-value">{{ card.value }}</p>
+      </div>
+      <i class="bi bi-arrow-right card-arrow"></i>
+    </a>
+  </div>
+
+  <!-- Quick Access -->
+  <div class="section-title">Quick Access</div>
+  <div class="quick-links">
+    <a (click)="setActiveTab('profile')" class="quick-link" [class.active]="activeTab === 'profile'" style="cursor: pointer;"><i class="bi bi-person-circle"></i> Profile</a>
+    <a (click)="setActiveTab('inquiry')" class="quick-link" [class.active]="activeTab === 'inquiry'" style="cursor: pointer;"><i class="bi bi-search"></i> Inquiries</a>
+    <a (click)="setActiveTab('sales')"   class="quick-link" [class.active]="activeTab === 'sales'"   style="cursor: pointer;"><i class="bi bi-cart3"></i> Sales Orders</a>
+    <a (click)="setActiveTab('delivery')" class="quick-link" [class.active]="activeTab === 'delivery'" style="cursor: pointer;"><i class="bi bi-truck"></i> Deliveries</a>
+    <a (click)="setActiveTab('finance')"  class="quick-link" [class.active]="activeTab === 'finance'"  style="cursor: pointer;"><i class="bi bi-cash-stack"></i> Finance</a>
+  </div>
+
+  <!-- Quick Access Data Sections -->
+  <div class="quick-access-data mt-4" *ngIf="activeTab">
+    
+    <!-- Profile Info Card -->
+    <div *ngIf="activeTab === 'profile'" class="profile-card fade-in">
+      <h3><i class="bi bi-person-circle"></i> Customer Profile</h3>
+      <div class="row mt-3" *ngIf="profileData">
+        <div class="col-md-6 mb-2"><strong>Customer ID:</strong> {{ profileData.CUST_ID || custId }}</div>
+        <div class="col-md-6 mb-2"><strong>Name:</strong> {{ profileData.NAME || profileData.NAME1 || custName }}</div>
+        <div class="col-md-6 mb-2"><strong>City:</strong> {{ profileData.CITY || profileData.ORT01 || 'N/A' }}</div>
+        <div class="col-md-6 mb-2"><strong>Phone:</strong> {{ profileData.PHONE || profileData.TELF1 || 'N/A' }}</div>
+        <div class="col-md-12 mb-2"><strong>Email:</strong> {{ profileData.EMAIL || profileData.SMTP_ADDR || 'N/A' }}</div>
+      </div>
+      <p *ngIf="!profileData" class="text-muted mt-3">Loading profile data...</p>
+    </div>
+
+    <!-- Sales Table -->
+    <div *ngIf="activeTab === 'sales'" class="fade-in table-card">
+      <h3 class="mb-3"><i class="bi bi-cart3"></i> Sales Orders</h3>
+      <app-reusable-table [columns]="salesColumns" [data]="salesData" [enableFilters]="false" emptyMessage="No sales orders found."></app-reusable-table>
+    </div>
+
+    <!-- Inquiry Table -->
+    <div *ngIf="activeTab === 'inquiry'" class="fade-in table-card">
+      <h3 class="mb-3"><i class="bi bi-search"></i> Inquiries</h3>
+      <app-reusable-table [columns]="inquiryColumns" [data]="inquiryData" [enableFilters]="false" emptyMessage="No inquiries found."></app-reusable-table>
+    </div>
+
+    <!-- Delivery Table -->
+    <div *ngIf="activeTab === 'delivery'" class="fade-in table-card">
+      <h3 class="mb-3"><i class="bi bi-truck"></i> Deliveries</h3>
+      <app-reusable-table [columns]="deliveryColumns" [data]="deliveryData" [enableFilters]="false" dateKey="CREATED_DATE" emptyMessage="No deliveries found."></app-reusable-table>
+    </div>
+
+    <!-- Finance Table -->
+    <div *ngIf="activeTab === 'finance'" class="fade-in table-card">
+      <h3 class="mb-3"><i class="bi bi-cash-stack"></i> Pending Payments</h3>
+      <app-reusable-table [columns]="financeColumns" [data]="financeData" [enableFilters]="false" emptyMessage="No pending payments found."></app-reusable-table>
+    </div>
+  </div>
+</main>

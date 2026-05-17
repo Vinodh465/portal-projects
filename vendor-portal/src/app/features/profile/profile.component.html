@@ -1,0 +1,65 @@
+<div class="profile-page fade-in">
+  <div class="page-header">
+    <h1>Vendor Profile</h1>
+    <p>Your registered vendor details from SAP</p>
+  </div>
+
+  <div class="profile-loading" *ngIf="loading">
+    <mat-spinner diameter="40"></mat-spinner>
+    <p>Loading profile...</p>
+  </div>
+
+  <div class="profile-error" *ngIf="!loading && error">
+    <mat-icon>error_outline</mat-icon>
+    <p>{{ error }}</p>
+  </div>
+
+  <div class="profile-content" *ngIf="!loading && profile">
+    <!-- Hero Card -->
+    <div class="profile-hero card">
+      <div class="hero-avatar">{{ getInitial() }}</div>
+      <div class="hero-info">
+        <h2>{{ profile.Name }}</h2>
+        <span class="vendor-badge">Vendor ID: {{ profile.VendorId }}</span>
+      </div>
+      <div class="hero-meta">
+        <div class="meta-item" *ngFor="let f of contactFields">
+          <mat-icon>{{ f.icon }}</mat-icon>
+          <span>{{ getField(f.key) }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Info Grid -->
+    <div class="profile-grid">
+      <!-- General Info -->
+      <div class="info-card card">
+        <div class="info-card__header">
+          <mat-icon>info</mat-icon>
+          <h3>General Information</h3>
+        </div>
+        <div class="info-grid">
+          <div class="info-item" *ngFor="let f of infoSections">
+            <mat-icon>{{ f.icon }}</mat-icon>
+            <div>
+              <label>{{ f.label }}</label>
+              <span>{{ getField(f.key) }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Address -->
+      <div class="info-card card">
+        <div class="info-card__header">
+          <mat-icon>location_on</mat-icon>
+          <h3>Address</h3>
+        </div>
+        <div class="address-block">
+          <p>{{ getField('City') }}, {{ getField('Region') }} {{ getField('Postal') }}</p>
+          <p>{{ getField('CountryKey') }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

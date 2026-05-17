@@ -1,0 +1,150 @@
+<mvc:View
+    controllerName="zshopfloor.controller.ProductionOrders"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    xmlns:f="sap.ui.layout.form"
+    displayBlock="true">
+
+    <Page
+        id="idProductionOrdersPage"
+        title="Production Orders"
+        showNavButton="true"
+        navButtonPress="onNavBack"
+        class="sfPage">
+
+
+        <!-- Filter Bar -->
+
+        <content>
+            <VBox class="sfTableContainer">
+
+                <!-- Icon Tab Bar for status quick-filter -->
+                <!-- Record count & info -->
+                <Toolbar class="sfInfoBar">
+                    <Text id="idProdRecordCount" text="Loading..." class="sfRecordCount"/>
+                    <ToolbarSpacer/>
+                </Toolbar>
+
+                <!-- Production Orders Table -->
+                <Table
+                    id="idProductionOrdersTable"
+                    items="{
+                        path: '/ProductionOrdersSet',
+                        templateShareable: true,
+                        operationMode: 'Client'
+                    }"
+                    growing="true"
+                    growingThreshold="20"
+                    growingScrollToLoad="true"
+                    noDataText="No production orders found"
+                    busyIndicatorDelay="0"
+                    class="sfTable"
+                    updateFinished="onUpdateFinished"
+                    mode="None"
+                    selectionChange="onSelectionChange"
+                    fixedLayout="false">
+
+                    <headerToolbar>
+                        <Toolbar class="sfTableHeader">
+                            <Title text="Production Orders" level="H4" class="sfTableTitle"/>
+                            <ToolbarSpacer/>
+                        </Toolbar>
+                    </headerToolbar>
+
+                    <columns>
+                        <Column width="11rem">
+                            <header><Label text="Production Order" class="sfColHeader"/></header>
+                        </Column>
+                        <Column width="11rem">
+                            <header><Label text="Material" class="sfColHeader"/></header>
+                        </Column>
+                        <Column width="8rem">
+                            <header><Label text="Plant" class="sfColHeader"/></header>
+                        </Column>
+                        <Column width="11rem">
+                            <header><Label text="Scheduled Start" class="sfColHeader"/></header>
+                        </Column>
+                        <Column width="11rem">
+                            <header><Label text="Scheduled Finish" class="sfColHeader"/></header>
+                        </Column>
+                    </columns>
+
+                    <items>
+                        <ColumnListItem
+                            type="Navigation"
+                            press="onRowPress"
+                            highlight="{
+                                path: 'Status',
+                                formatter: '.formatter.statusToHighlight'
+                            }">
+                            <cells>
+                                <ObjectIdentifier
+                                    title="{Aufnr}"
+                                    text="{Auart}"/>
+                                <Text text="{Matnr}"/>
+                                <Text text="{Werks}"/>
+                                <Text text="{
+                                    path: 'Gstrp',
+                                    formatter: '.formatter.formatDate'
+                                }"/>
+                                <Text text="{
+                                    path: 'Gltrp',
+                                    formatter: '.formatter.formatDate'
+                                }"/>
+                            </cells>
+                        </ColumnListItem>
+                    </items>
+                </Table>
+            </VBox>
+        </content>
+
+        <!-- Order Detail Dialog -->
+        <dependents>
+            <Dialog id="idOrderDetailDialog" title="Production Order Details" contentWidth="450px">
+                <content>
+                    <f:SimpleForm editable="false" layout="ResponsiveGridLayout" labelSpanL="4" labelSpanM="4" columnsL="1" columnsM="1">
+                        <f:content>
+                            <core:Title text="Order Information" />
+                            <Label text="Production Order" />
+                            <Text text="{detailModel>/Aufnr}" />
+                            
+                            <Label text="Order Type" />
+                            <Text text="{detailModel>/Auart}" />
+                            
+                            <Label text="Material" />
+                            <Text text="{detailModel>/Matnr}" />
+                            
+                            <Label text="Material Description" />
+                            <Text text="{detailModel>/Maktx}" />
+                            
+                            <Label text="Plant" />
+                            <Text text="{detailModel>/Werks}" />
+
+                            <core:Title text="Dates" />
+                            <Label text="Scheduled Start" />
+                            <Text text="{path: 'detailModel>/Gstrp', formatter: '.formatter.formatDate'}" />
+                            
+                            <Label text="Scheduled Finish" />
+                            <Text text="{path: 'detailModel>/Gltrp', formatter: '.formatter.formatDate'}" />
+                            
+                            <Label text="System Status" />
+                            <ObjectStatus text="{detailModel>/Status}" state="{path: 'detailModel>/Status', formatter: '.formatter.statusToState'}" inverted="true" />
+                        </f:content>
+                    </f:SimpleForm>
+                </content>
+                <beginButton>
+                    <Button text="Close" press="onCloseDialog" type="Emphasized"/>
+                </beginButton>
+            </Dialog>
+        </dependents>
+
+        <footer>
+            <Toolbar class="sfFooterBar">
+                <ToolbarSpacer/>
+                <Text id="idProdFooterText" text="" class="sfFooterText"/>
+            </Toolbar>
+        </footer>
+
+    </Page>
+</mvc:View>
