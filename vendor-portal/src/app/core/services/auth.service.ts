@@ -16,11 +16,16 @@ export class AuthService {
 
   constructor(private router: Router) {}
 
+  private stripLeadingZeros(value: string): string {
+    return value.replace(/^0+/, '') || '0';
+  }
+
   login(result: LoginResult): void {
-    sessionStorage.setItem(VENDOR_ID_KEY, result.Lifnr);
-    sessionStorage.setItem(VENDOR_NAME_KEY, result.Lifnr); // SAP doesn't return Name in LOGINSet
-    this._vendorId.set(result.Lifnr);
-    this._vendorName.set(result.Lifnr);
+    const displayId = this.stripLeadingZeros(result.Lifnr);
+    sessionStorage.setItem(VENDOR_ID_KEY, displayId);
+    sessionStorage.setItem(VENDOR_NAME_KEY, displayId); // SAP doesn't return Name in LOGINSet
+    this._vendorId.set(displayId);
+    this._vendorName.set(displayId);
   }
 
   logout(): void {

@@ -13,27 +13,65 @@
         navButtonPress="onNavBack"
         class="sfPage">
 
-
-        <!-- Filter Bar -->
-
         <content>
             <VBox class="sfTableContainer">
 
-                <!-- Icon Tab Bar for status quick-filter -->
-                <!-- Record count & info -->
+                <!-- ── Filter Bar ── -->
+                <Toolbar class="sfFilterBar">
+                    <SearchField
+                        id="idProdSearchField"
+                        placeholder="Search by Order No, Material, Plant…"
+                        search="onSearch"
+                        liveChange="onSearchLive"
+                        width="22rem"
+                        class="sfSearchField"/>
+                    <Select
+                        id="idProdPlantFilter"
+                        change="onPlantFilterChange"
+                        class="sfFilterSelect"
+                        width="10rem">
+                        <items>
+                            <core:Item key="" text="All Plants"/>
+                            <core:Item key="0001" text="Plant 0001"/>
+                            <core:Item key="1003" text="Plant 1003"/>
+                        </items>
+                    </Select>
+                    <Select
+                        id="idProdOrderTypeFilter"
+                        change="onOrderTypeFilterChange"
+                        class="sfFilterSelect"
+                        width="11rem">
+                        <items>
+                            <core:Item key="" text="All Order Types"/>
+                            <core:Item key="PP01" text="PP01"/>
+                            <core:Item key="PM02" text="PM02"/>
+                        </items>
+                    </Select>
+                    <Button
+                        text="Clear"
+                        icon="sap-icon://clear-filter"
+                        press="onClearFilters"
+                        type="Transparent"
+                        class="sfClearBtn"/>
+                    <ToolbarSpacer/>
+                    <Button
+                        text="Refresh"
+                        icon="sap-icon://refresh"
+                        press="onRefresh"
+                        type="Transparent"
+                        class="sfRefreshBtn"/>
+                </Toolbar>
+
+                <!-- Record count -->
                 <Toolbar class="sfInfoBar">
                     <Text id="idProdRecordCount" text="Loading..." class="sfRecordCount"/>
                     <ToolbarSpacer/>
                 </Toolbar>
 
-                <!-- Production Orders Table -->
+                <!-- Table bound to LOCAL JSON model -->
                 <Table
                     id="idProductionOrdersTable"
-                    items="{
-                        path: '/ProductionOrdersSet',
-                        templateShareable: true,
-                        operationMode: 'Client'
-                    }"
+                    items="{localModel>/items}"
                     growing="true"
                     growingThreshold="20"
                     growingScrollToLoad="true"
@@ -73,23 +111,19 @@
                     <items>
                         <ColumnListItem
                             type="Navigation"
-                            press="onRowPress"
-                            highlight="{
-                                path: 'Status',
-                                formatter: '.formatter.statusToHighlight'
-                            }">
+                            press="onRowPress">
                             <cells>
                                 <ObjectIdentifier
-                                    title="{Aufnr}"
-                                    text="{Auart}"/>
-                                <Text text="{Matnr}"/>
-                                <Text text="{Werks}"/>
+                                    title="{localModel>Aufnr}"
+                                    text="{localModel>Auart}"/>
+                                <Text text="{localModel>Matnr}"/>
+                                <Text text="{localModel>Werks}"/>
                                 <Text text="{
-                                    path: 'Gstrp',
+                                    path: 'localModel>Gstrp',
                                     formatter: '.formatter.formatDate'
                                 }"/>
                                 <Text text="{
-                                    path: 'Gltrp',
+                                    path: 'localModel>Gltrp',
                                     formatter: '.formatter.formatDate'
                                 }"/>
                             </cells>
@@ -103,33 +137,30 @@
         <dependents>
             <Dialog id="idOrderDetailDialog" title="Production Order Details" contentWidth="450px">
                 <content>
-                    <f:SimpleForm editable="false" layout="ResponsiveGridLayout" labelSpanL="4" labelSpanM="4" columnsL="1" columnsM="1">
+                    <f:SimpleForm editable="false" layout="ResponsiveGridLayout"
+                        labelSpanL="4" labelSpanM="4" columnsL="1" columnsM="1">
                         <f:content>
-                            <core:Title text="Order Information" />
-                            <Label text="Production Order" />
-                            <Text text="{detailModel>/Aufnr}" />
-                            
-                            <Label text="Order Type" />
-                            <Text text="{detailModel>/Auart}" />
-                            
-                            <Label text="Material" />
-                            <Text text="{detailModel>/Matnr}" />
-                            
-                            <Label text="Material Description" />
-                            <Text text="{detailModel>/Maktx}" />
-                            
-                            <Label text="Plant" />
-                            <Text text="{detailModel>/Werks}" />
-
-                            <core:Title text="Dates" />
-                            <Label text="Scheduled Start" />
-                            <Text text="{path: 'detailModel>/Gstrp', formatter: '.formatter.formatDate'}" />
-                            
-                            <Label text="Scheduled Finish" />
-                            <Text text="{path: 'detailModel>/Gltrp', formatter: '.formatter.formatDate'}" />
-                            
-                            <Label text="System Status" />
-                            <ObjectStatus text="{detailModel>/Status}" state="{path: 'detailModel>/Status', formatter: '.formatter.statusToState'}" inverted="true" />
+                            <core:Title text="Order Information"/>
+                            <Label text="Production Order"/>
+                            <Text text="{detailModel>/Aufnr}"/>
+                            <Label text="Order Type"/>
+                            <Text text="{detailModel>/Auart}"/>
+                            <Label text="Material"/>
+                            <Text text="{detailModel>/Matnr}"/>
+                            <Label text="Material Description"/>
+                            <Text text="{detailModel>/Maktx}"/>
+                            <Label text="Plant"/>
+                            <Text text="{detailModel>/Werks}"/>
+                            <core:Title text="Dates"/>
+                            <Label text="Scheduled Start"/>
+                            <Text text="{path: 'detailModel>/Gstrp', formatter: '.formatter.formatDate'}"/>
+                            <Label text="Scheduled Finish"/>
+                            <Text text="{path: 'detailModel>/Gltrp', formatter: '.formatter.formatDate'}"/>
+                            <Label text="System Status"/>
+                            <ObjectStatus
+                                text="{detailModel>/Status}"
+                                state="{path: 'detailModel>/Status', formatter: '.formatter.statusToState'}"
+                                inverted="true"/>
                         </f:content>
                     </f:SimpleForm>
                 </content>

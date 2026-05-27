@@ -24,9 +24,9 @@ import {
 const SOAP_ENDPOINTS = {
   login: '/sap/bc/srt/scs/sap/zsd_cust_login_srv_093?sap-client=100',
   profile: '/sap/bc/srt/scs/sap/zsd_cust_profile_srv_093?sap-client=100',
-  inquiry: '/sap/bc/srt/scs/sap/zsd_inquiry_srv_2093?sap-client=100',
-  sales: '/sap/bc/srt/scs/sap/zsd_sales_srv_2093?sap-client=100',
-  delivery: '/sap/bc/srt/scs/sap/zsd_delivery_srv_0093?sap-client=100',
+  inquiry: '/sap/bc/srt/scs/sap/zsd_inquiry_srv_2193?sap-client=100',
+  sales: '/sap/bc/srt/scs/sap/zsd_sales_srv_2193?sap-client=100',
+  delivery: '/sap/bc/srt/scs/sap/zsd_delivery_srv_2193?sap-client=100',
   finance: '/sap/bc/srt/scs/sap/zsd_cust_finance_srv_0093?sap-client=100',
   pdf: '/sap/bc/srt/scs/sap/zsd_finance_pdf_srv_0093?sap-client=100'
 };
@@ -36,9 +36,9 @@ const SOAP_ENDPOINTS = {
 const FM = {
   login: 'ZFM_SD_CUST_LOGIN_093',
   profile: 'ZFM_SD_CUST_PROFILE_093',
-  inquiry: 'ZFM_SD_INQUIRY_093',
-  sales: 'ZFM_SD_SALES_093',
-  delivery: 'ZFM_SD_DELIVERY_093',
+  inquiry: 'ZFM_SD_INQUIRY_FINAL_093',
+  sales: 'ZFM_SD_SALES_FINAL_093',
+  delivery: 'ZFM_SD_DELIVERY_FINAL_093',
   finance: 'ZFM_SD_FINANCE_093',
   pdf: 'ZFM_SD_FINANCE_PDF_093'
 };
@@ -92,6 +92,20 @@ ${innerXml}
     console.log(`[${fm}] Extracted`, rows.length, 'rows');
     if (rows.length > 0) console.log(`[${fm}] First row keys:`, Object.keys(rows[0]));
     return rows;
+  }
+
+  // ── Helper: map SAP unit codes to full names ──────────────────────────────
+  private mapUnit(code: string): string {
+    const raw = String(code || '').trim().toUpperCase();
+    const unitMap: { [key: string]: string } = {
+      'EA': 'Each',
+      'BAG': 'Bag',
+      'ST': 'Set / Piece',
+      'MGL': 'Milligram/Liter',
+      'KG': 'Kilogram',
+      'L': 'Liter'
+    };
+    return unitMap[raw] || raw;
   }
 
   // ── LOGIN ──────────────────────────────────────────────────────────────────
@@ -210,47 +224,21 @@ ${innerXml}
   private mapInquiryRow(item: any): InquiryItem {
     const mapped: any = { ...item };
 
-    // Doc Number: try normalized first, then SAP raw
-    mapped.DOC_NO = item.DOC_NO
-      || item.VBELN
-      || item.BELNR
-      || '';
+    mapped.DOC_NO = item.VBELN || item.DOC_NO || item.BELNR || '';
+    mapped.DOC_DATE = item.ERDAT || item.DOC_DATE || item.AUDAT || item.BLDAT || '';
+    mapped.DOC_TYPE = item.AUART || item.DOC_TYPE || item.BSART || '';
+    mapped.STATUS_INQUIRY = item.FKSTK || item.LFSTK || item.GBSTK || item.STATUS_INQUIRY || item.ABGRU || item.STATUS || '';
+    mapped.SALES_ORG = item.VKORG || item.SALES_ORG || item.EKORG || '';
+    mapped.NET_VALUE = item.NETWR || item.NET_VALUE || item.AMOUNT || '';
+    mapped.CURRENCY = item.WAERK || item.CURRENCY || item.WAERS || '';
+    mapped.MATERIAL_NAME = item.ARKTX || item.MAT_DES || item.MAKTX || '';
 
-    // Document Date
-    mapped.DOC_DATE = item.DOC_DATE
-      || item.ERDAT
-      || item.BLDAT
-      || item.AUDAT
-      || '';
-
-    // Document Type
-    mapped.DOC_TYPE = item.DOC_TYPE
-      || item.AUART
-      || item.BSART
-      || '';
-
-    // Status: Prioritize Billing (FKSTK) and Delivery (LFSTK) over overall status (GBSTK)
-    mapped.STATUS_INQUIRY = item.FKSTK
-      || item.LFSTK
-      || item.GBSTK
-      || item.STATUS_INQUIRY
-      || item.ABGRU
-      || item.STATUS
-      || '';
-
-    // Sales Organisation
-    mapped.SALES_ORG = item.SALES_ORG
-      || item.VKORG
-      || item.EKORG
-      || '';
-
-    // Net Value
-    const valKey = Object.keys(item).find(k => /^(NET_VAL|NETWR|AMOUNT|VALUE|NET_AMT)/i.test(k));
-    mapped.NET_VALUE = item.NET_VALUE || (valKey ? item[valKey] : '') || '';
-
-    // Currency
-    const currKey = Object.keys(item).find(k => /^(CURR|WAERS|WAERK|CURRENCY)/i.test(k));
-    mapped.CURRENCY = item.CURRENCY || (currKey ? item[currKey] : '') || '';
+    // Additional fields requested by user
+    mapped.CREATED_BY = item.ERNAM || '';
+    mapped.DIST_CHANNEL = item.VTWEG || '';
+    mapped.DIVISION = item.SPART || '';
+    mapped.CUSTOMER_REF = item.BSTNK || '';
+    mapped.DOC_CATEGORY = item.VBTYP || '';
 
     return mapped as InquiryItem;
   }
@@ -280,31 +268,23 @@ ${innerXml}
   private mapSalesRow(item: any): SalesItem {
     const mapped: any = { ...item };
 
-    mapped.DOC_NO = item.DOC_NO
-      || item.VBELN
-      || item.ORDER_NO
-      || '';
+    mapped.DOC_NO = item.VBELN || item.DOC_NO || item.ORDER_NO || '';
+    mapped.DOC_DATE = item.ERDAT || item.DOC_DATE || item.ORDER_DATE || item.BLDAT || '';
+    mapped.DOC_TYPE = item.AUART || item.DOC_TYPE || item.BSART || '';
+    mapped.SALES_ORG = item.VKORG || item.SALES_ORG || '';
+    
+    mapped.AMOUNT = item.NETWR || item.AMOUNT || item.NET_VALUE || '';
+    mapped.CURRENCY = item.WAERK || item.CURRENCY || item.WAERS || '';
 
-    mapped.DOC_DATE = item.DOC_DATE
-      || item.ERDAT
-      || item.ORDER_DATE
-      || item.BLDAT
-      || '';
+    mapped.MATERIAL_NAME = item.ARKTX || item.MAKTX || item.MAT_DES || '';
+    mapped.QUANTITY = item.KWMENG || item.QUANTITY || '';
+    mapped.UNIT = this.mapUnit(item.VRKME || item.UNIT || '');
 
-    mapped.DOC_TYPE = item.DOC_TYPE
-      || item.AUART
-      || item.BSART
-      || '';
-
-    mapped.SALES_ORG = item.SALES_ORG
-      || item.VKORG
-      || '';
-
-    const valKey = Object.keys(item).find(k => /^(NET_VAL|NETWR|AMOUNT|VALUE|NET_AMT)/i.test(k));
-    mapped.AMOUNT = item.AMOUNT || item.NET_VALUE || (valKey ? item[valKey] : '') || '';
-
-    const currKey = Object.keys(item).find(k => /^(CURR|WAERS|WAERK|CURRENCY)/i.test(k));
-    mapped.CURRENCY = item.CURRENCY || (currKey ? item[currKey] : '') || '';
+    // Additional fields requested by user
+    mapped.DIST_CHANNEL = item.VTWEG || '';
+    mapped.DIVISION = item.SPART || '';
+    mapped.ITEM_NO = item.POSNR || '';
+    mapped.MATERIAL_NO = item.MATNR || '';
 
     return mapped as SalesItem;
   }
@@ -345,39 +325,21 @@ ${innerXml}
   private mapDeliveryRow(item: any): DeliveryItem {
     const mapped: any = { ...item };
 
-    mapped.DELIVERY_NO = item.DELIVERY_NO
-      || item.VBELN
-      || item.DOC_NO
-      || '';
+    mapped.DELIVERY_NO = item.DEL_NO || item.DELIVERY_NO || item.VBELN || item.DOC_NO || '';
+    mapped.CREATED_DATE = item.DEL_DATE || item.CREATED_DATE || item.ERDAT || item.BLDAT || '';
+    mapped.DELIVERY_TYPE = item.DEL_TYP || item.DELIVERY_TYPE || item.LFART || item.DOC_TYPE || '';
+    mapped.DELIVERY_STATUS = item.WBSTK || item.GBSTK || item.STATUS || item.DELIVERY_STATUS || '';
+    mapped.GOODS_ISSUE_DATE = item.PLAN_DATE || item.GOODS_ISSUE_DATE || item.WADAT_IST || item.WADAT || item.LFDAT || '';
+    mapped.SHIP_TO_PARTY = item.SHIP_PNT || item.SHIP_TO_PARTY || item.KUNNR || item.KUNWE || '';
+    mapped.MATERIAL_NAME = item.MAT_DES || item.ARKTX || item.MAKTX || '';
+    mapped.QUANTITY = item.DEL_QTY || item.KWMENG || '';
+    mapped.UNIT = this.mapUnit(item.S_UNIT || item.VRKME || '');
 
-    mapped.CREATED_DATE = item.CREATED_DATE
-      || item.ERDAT
-      || item.BLDAT
-      || '';
-
-    mapped.DELIVERY_TYPE = item.DELIVERY_TYPE
-      || item.LFART
-      || item.DOC_TYPE
-      || '';
-
-    // Status: WBSTK = Overall GI Status, GBSTK = Overall Status
-    mapped.DELIVERY_STATUS = item.DELIVERY_STATUS
-      || item.WBSTK
-      || item.GBSTK
-      || item.STATUS
-      || '';
-
-    // Goods Issue Date: WADAT_IST = actual GI date, WADAT = planned GI date
-    mapped.GOODS_ISSUE_DATE = item.GOODS_ISSUE_DATE
-      || item.WADAT_IST
-      || item.WADAT
-      || item.LFDAT
-      || '';
-
-    mapped.SHIP_TO_PARTY = item.SHIP_TO_PARTY
-      || item.KUNNR
-      || item.KUNWE
-      || '';
+    // Additional fields requested by user
+    mapped.ITEM_NO = item.DEL_ITM || '';
+    mapped.MATERIAL_NO = item.MAT_NO || '';
+    mapped.REF_DOC = item.REF_DOC || '';
+    mapped.REF_ITEM = item.REF_ITEM || '';
 
     return mapped as DeliveryItem;
   }

@@ -12,26 +12,65 @@
         navButtonPress="onNavBack"
         class="sfPage">
 
-
-        <!-- Search and Filter Bar -->
-
         <content>
             <VBox class="sfTableContainer">
 
-                <!-- Record count info bar -->
+                <!-- ── Filter Bar ── -->
+                <Toolbar class="sfFilterBar">
+                    <SearchField
+                        id="idSearchField"
+                        placeholder="Search by Order No, Material, Plant, Type…"
+                        search="onSearch"
+                        liveChange="onSearchLive"
+                        width="22rem"
+                        class="sfSearchField"/>
+                    <Select
+                        id="idPlantFilter"
+                        change="onPlantFilterChange"
+                        class="sfFilterSelect"
+                        width="10rem">
+                        <items>
+                            <core:Item key="" text="All Plants"/>
+                            <core:Item key="0001" text="Plant 0001"/>
+                            <core:Item key="1003" text="Plant 1003"/>
+                        </items>
+                    </Select>
+                    <Select
+                        id="idOrderTypeFilter"
+                        change="onOrderTypeFilterChange"
+                        class="sfFilterSelect"
+                        width="11rem">
+                        <items>
+                            <core:Item key="" text="All Order Types"/>
+                            <core:Item key="Z01" text="Z01"/>
+                            <core:Item key="001" text="001"/>
+                        </items>
+                    </Select>
+                    <Button
+                        text="Clear"
+                        icon="sap-icon://clear-filter"
+                        press="onClearFilters"
+                        type="Transparent"
+                        class="sfClearBtn"/>
+                    <ToolbarSpacer/>
+                    <Button
+                        text="Refresh"
+                        icon="sap-icon://refresh"
+                        press="onRefresh"
+                        type="Transparent"
+                        class="sfRefreshBtn"/>
+                </Toolbar>
+
+                <!-- Record count -->
                 <Toolbar class="sfInfoBar">
                     <Text id="idRecordCount" text="Loading..." class="sfRecordCount"/>
                     <ToolbarSpacer/>
                 </Toolbar>
 
-                <!-- Main Table -->
+                <!-- Table bound to LOCAL JSON model — not OData directly -->
                 <Table
                     id="idPlannedOrdersTable"
-                    items="{
-                        path: '/PlannedOrdersSet',
-                        templateShareable: true,
-                        operationMode: 'Client'
-                    }"
+                    items="{localModel>/items}"
                     growing="true"
                     growingThreshold="25"
                     growingScrollToLoad="true"
@@ -51,28 +90,28 @@
                     </headerToolbar>
 
                     <columns>
-                        <Column width="11rem" hAlign="Begin" class="sfCol">
+                        <Column width="11rem" hAlign="Begin">
                             <header><Label text="Planned Order" class="sfColHeader"/></header>
                         </Column>
-                        <Column width="12rem" class="sfCol">
+                        <Column width="12rem">
                             <header><Label text="Material" class="sfColHeader"/></header>
                         </Column>
-                        <Column width="8rem" class="sfCol">
+                        <Column width="8rem">
                             <header><Label text="Plant" class="sfColHeader"/></header>
                         </Column>
-                        <Column width="10rem" class="sfCol">
+                        <Column width="10rem">
                             <header><Label text="Order Type" class="sfColHeader"/></header>
                         </Column>
-                        <Column width="10rem" hAlign="End" class="sfCol">
+                        <Column width="10rem" hAlign="End">
                             <header><Label text="Order Qty" class="sfColHeader"/></header>
                         </Column>
-                        <Column width="8rem" hAlign="End" class="sfCol">
+                        <Column width="8rem" hAlign="End">
                             <header><Label text="Unit" class="sfColHeader"/></header>
                         </Column>
-                        <Column width="11rem" class="sfCol">
+                        <Column width="11rem">
                             <header><Label text="Basic Start Date" class="sfColHeader"/></header>
                         </Column>
-                        <Column width="11rem" class="sfCol">
+                        <Column width="11rem">
                             <header><Label text="Basic End Date" class="sfColHeader"/></header>
                         </Column>
                     </columns>
@@ -80,24 +119,20 @@
                     <items>
                         <ColumnListItem
                             type="Navigation"
-                            press="onRowPress"
-                            highlight="{
-                                path: 'Status',
-                                formatter: '.formatter.statusToHighlight'
-                            }">
+                            press="onRowPress">
                             <cells>
-                                <ObjectIdentifier title="{Plnum}"/>
-                                <Text text="{Matnr}"/>
-                                <Text text="{Werks}"/>
-                                <Text text="{Dispo}"/>
-                                <ObjectNumber number="{Gsmng}" unit="{Meins}"/>
-                                <Text text="{Meins}"/>
+                                <ObjectIdentifier title="{localModel>Plnum}"/>
+                                <Text text="{localModel>Matnr}"/>
+                                <Text text="{localModel>Werks}"/>
+                                <Text text="{localModel>Dispo}"/>
+                                <ObjectNumber number="{localModel>Gsmng}" unit="{localModel>Meins}"/>
+                                <Text text="{localModel>Meins}"/>
                                 <Text text="{
-                                    path: 'Psttr',
+                                    path: 'localModel>Psttr',
                                     formatter: '.formatter.formatDate'
                                 }"/>
                                 <Text text="{
-                                    path: 'Pedtr',
+                                    path: 'localModel>Pedtr',
                                     formatter: '.formatter.formatDate'
                                 }"/>
                             </cells>

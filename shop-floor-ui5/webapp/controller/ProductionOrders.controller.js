@@ -3,10 +3,9 @@ sap.ui.define([
     "sap/ui/model/json/JSONModel",
     "sap/ui/model/Filter",
     "sap/ui/model/FilterOperator",
-    "sap/ui/model/Sorter",
     "sap/m/MessageToast",
     "sap/m/MessageBox"
-], function (BaseController, JSONModel, Filter, FilterOperator, Sorter, MessageToast, MessageBox) {
+], function (BaseController, JSONModel, Filter, FilterOperator, MessageToast, MessageBox) {
     "use strict";
 
     return BaseController.extend("zshopfloor.controller.ProductionOrders", {
@@ -14,23 +13,15 @@ sap.ui.define([
         onInit: function () {
             this.getRouter().getRoute("productionOrders").attachPatternMatched(this._onRouteMatched, this);
 
-            var oProdModel = new JSONModel({
-                totalCount: "0",
-                crtdCount:  "0",
-                relCount:   "0",
-                prelCount:  "0",
-                tecoCount:  "0",
-                clsdCount:  "0",
-                hasSelection: false
-            });
-            this.getView().setModel(oProdModel, "prodModel");
+            this._sSearchValue     = "";
+            this._sPlantFilter     = "";
+            this._sOrderTypeFilter = "";
+            this._aAllRecords      = null;
 
-            var oDetailModel = new JSONModel({});
-            this.getView().setModel(oDetailModel, "detailModel");
-
-            this._sActiveTabKey   = "ALL";
-            this._sSearchValue    = "";
-            this._oCurrentSorter  = null;
+            // Local model drives the table
+            this.getView().setModel(new JSONModel({ items: [] }), "localModel");
+            // Detail model for dialog
+            this.getView().setModel(new JSONModel({}), "detailModel");
         },
 
         _onRouteMatched: function () {
@@ -39,86 +30,160 @@ sap.ui.define([
                 this.navTo("login", {}, true);
                 return;
             }
+            this._fetchAllData();
         },
 
         _getTable: function () {
             return this.getView().byId("idProductionOrdersTable");
         },
 
-        _applyFilters: function () {
-            var aFilters = [];
-            var sVal = (this._sSearchValue || "").trim();
+        // ── Fetch ALL records from OData into memory ──────────────────────
+        _fetchAllData: function () {
+            var oODataModel = this.getOwnerComponent().getModel();
 
-            if (sVal !== "") {
-                aFilters.push(new Filter({
-                    filters: [
-                        new Filter("Aufnr", FilterOperator.Contains, sVal),
-                        new Filter("Matnr", FilterOperator.Contains, sVal),
-                        new Filter("Werks", FilterOperator.Contains, sVal)
-                    ],
-                    and: false
-                }));
-            }
-
-            var oTable = this._getTable();
-            var oBinding = oTable.getBinding("items");
-            
-            if (oBinding) {
-                oBinding.filter(aFilters);
-                if (sVal !== "") {
-                    MessageToast.show("Searching for: " + sVal);
+            oODataModel.read("/ProductionOrdersSet", {
+                success: function (oData) {
+                    var aResults = oData.results || [];
+                    this._aAllRecords = aResults;
+                    this.getView().getModel("localModel").setProperty("/items", aResults);
+                    this._updateCount(aResults.length, aResults.length);
+                }.bind(this),
+                error: function () {
+                    MessageToast.show("Failed to load production orders.");
                 }
+            });
+        },
+
+        // ── Core manual filter ────────────────────────────────────────────
+        _applyFilters: function () {
+            if (!this._aAllRecords) { return; }
+
+            var sSearch    = (this._sSearchValue    || "").trim().toLowerCase();
+            var sPlant     = (this._sPlantFilter    || "").trim();
+            var sOrderType = (this._sOrderTypeFilter || "").trim();
+
+            var aFiltered = this._aAllRecords.filter(function (oRecord) {
+
+                // 1. Plant filter
+                if (sPlant !== "") {
+                    if ((oRecord.Werks || "").trim() !== sPlant) { return false; }
+                }
+
+                // 2. Order type filter (Auart field)
+                if (sOrderType !== "") {
+                    if ((oRecord.Auart || "").trim() !== sOrderType) { return false; }
+                }
+
+                // 3. Free-text search
+                if (sSearch !== "") {
+                    var sAufnr = (oRecord.Aufnr || "").toLowerCase();
+                    var sMatnr = (oRecord.Matnr || "").toLowerCase();
+                    var sWerks = (oRecord.Werks || "").toLowerCase();
+                    var sAuart = (oRecord.Auart || "").toLowerCase();
+                    var bMatch = sAufnr.indexOf(sSearch) !== -1 ||
+                                 sMatnr.indexOf(sSearch) !== -1 ||
+                                 sWerks.indexOf(sSearch) !== -1 ||
+                                 sAuart.indexOf(sSearch) !== -1;
+                    if (!bMatch) { return false; }
+                }
+
+                return true;
+            });
+
+            this.getView().getModel("localModel").setProperty("/items", aFiltered);
+            this._updateCount(aFiltered.length, this._aAllRecords.length);
+
+            if (sPlant !== "" || sOrderType !== "" || sSearch !== "") {
+                MessageToast.show(
+                    aFiltered.length === 0
+                        ? "No records match the selected filters"
+                        : aFiltered.length + " record(s) found"
+                );
             }
         },
 
+        _updateCount: function (iFiltered, iTotal) {
+            var oCount = this.getView().byId("idProdRecordCount");
+            if (oCount) {
+                oCount.setText(iFiltered + " of " + iTotal + " Production Orders");
+            }
+        },
+
+        // ── Search ────────────────────────────────────────────────────────
         onSearch: function (oEvent) {
-            this._sSearchValue = oEvent.getParameter("query") || "";
+            var sQuery = oEvent.getParameter("query");
+            if (sQuery === undefined || sQuery === null) {
+                sQuery = oEvent.getSource().getValue ? oEvent.getSource().getValue() : "";
+            }
+            this._sSearchValue = sQuery || "";
             this._applyFilters();
         },
 
         onSearchLive: function (oEvent) {
-            var sVal = oEvent.getParameter("newValue") || "";
-            if (sVal.length === 0) {
-                this._sSearchValue = "";
-                this._applyFilters();
-            }
+            this._sSearchValue = oEvent.getParameter("newValue") || "";
+            this._applyFilters();
         },
 
-        onUpdateFinished: function (oEvent) {
-            var iTotal  = oEvent.getParameter("total");
-            var iActual = oEvent.getParameter("actual");
-            var oCount  = this.getView().byId("idProdRecordCount");
-            if (oCount) {
-                oCount.setText(iActual + " of " + iTotal + " Production Orders");
-            }
-            var oFooter = this.getView().byId("idProdFooterText");
-            if (oFooter) {
-                oFooter.setText("Last updated: " + new Date().toLocaleTimeString());
-            }
-            this.getView().getModel("prodModel").setProperty("/totalCount", String(iTotal));
+        // ── Plant dropdown ────────────────────────────────────────────────
+        onPlantFilterChange: function (oEvent) {
+            var oItem = oEvent.getParameter("selectedItem");
+            this._sPlantFilter = oItem ? oItem.getKey() : "";
+            this._applyFilters();
         },
 
-        onSelectionChange: function (oEvent) {
-            var aSelected = this._getTable().getSelectedItems();
-            this.getView().getModel("prodModel").setProperty("/hasSelection", aSelected.length > 0);
-
-            if (aSelected.length > 0) {
-                var oCtx  = aSelected[0].getBindingContext();
-                var oData = oCtx ? oCtx.getObject() : {};
-                this.getView().getModel("detailModel").setData(oData);
-            }
+        // ── Order Type dropdown ───────────────────────────────────────────
+        onOrderTypeFilterChange: function (oEvent) {
+            var oItem = oEvent.getParameter("selectedItem");
+            this._sOrderTypeFilter = oItem ? oItem.getKey() : "";
+            this._applyFilters();
         },
 
+        // ── Clear ─────────────────────────────────────────────────────────
+        onClearFilters: function () {
+            this._sSearchValue     = "";
+            this._sPlantFilter     = "";
+            this._sOrderTypeFilter = "";
+
+            var oView = this.getView();
+            var oSearch = oView.byId("idProdSearchField");
+            var oPlant  = oView.byId("idProdPlantFilter");
+            var oType   = oView.byId("idProdOrderTypeFilter");
+            if (oSearch) { oSearch.setValue(""); }
+            if (oPlant)  { oPlant.setSelectedKey(""); }
+            if (oType)   { oType.setSelectedKey(""); }
+
+            if (this._aAllRecords) {
+                this.getView().getModel("localModel").setProperty("/items", this._aAllRecords);
+                this._updateCount(this._aAllRecords.length, this._aAllRecords.length);
+            }
+            MessageToast.show("Filters cleared.");
+        },
+
+        // ── Refresh ───────────────────────────────────────────────────────
+        onRefresh: function () {
+            this._aAllRecords      = null;
+            this._sSearchValue     = "";
+            this._sPlantFilter     = "";
+            this._sOrderTypeFilter = "";
+
+            var oView = this.getView();
+            var oSearch = oView.byId("idProdSearchField");
+            var oPlant  = oView.byId("idProdPlantFilter");
+            var oType   = oView.byId("idProdOrderTypeFilter");
+            if (oSearch) { oSearch.setValue(""); }
+            if (oPlant)  { oPlant.setSelectedKey(""); }
+            if (oType)   { oType.setSelectedKey(""); }
+
+            this._fetchAllData();
+            MessageToast.show("Table refreshed.");
+        },
+
+        // ── Row press → dialog ────────────────────────────────────────────
         onRowPress: function (oEvent) {
             var oSource  = oEvent.getSource();
-            var oContext = oSource.getBindingContext() || (oSource.getParent && oSource.getParent().getBindingContext());
-            if (!oContext) return;
-            var oData = oContext.getObject();
-            this.getView().getModel("detailModel").setData(oData);
-            this._openDialog();
-        },
-
-        _openDialog: function () {
+            var oContext = oSource.getBindingContext("localModel");
+            if (!oContext) { return; }
+            this.getView().getModel("detailModel").setData(oContext.getObject());
             var oDialog = this.getView().byId("idOrderDetailDialog");
             if (oDialog) { oDialog.open(); }
         },
@@ -128,26 +193,22 @@ sap.ui.define([
             if (oDialog) { oDialog.close(); }
         },
 
-
-        onRefresh: function () {
-            this._oCurrentSorter = null;
-            this._bSortDesc = false;
-            var oBinding = this._getTable().getBinding("items");
-            if (oBinding) { 
-                oBinding.sort(null);
-                oBinding.refresh(); 
+        onUpdateFinished: function () {
+            var oFooter = this.getView().byId("idProdFooterText");
+            if (oFooter) {
+                oFooter.setText("Last updated: " + new Date().toLocaleTimeString());
             }
-            MessageToast.show("Sorting reset and table refreshed.");
         },
+
+        onSelectionChange: function () {},
 
         onNavBack: function () {
             this.navTo("dashboard");
         },
 
-        onLogout: function() {
+        onLogout: function () {
             this.getOwnerComponent().getModel("userModel").setProperty("/isLoggedIn", false);
             this.navTo("login");
         }
-
     });
 });
